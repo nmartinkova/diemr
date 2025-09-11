@@ -1,4 +1,9 @@
-# diemr 1.5
+# diemr 1.5.1
+
+- Updated DESCRIPTION (Title, Description, BugReports).
+
+
+# diemr 1.5, released 11-09-2025
 
 - Added iris plots to the `plotPolarized`.
 - Updated internal function `markerAxis` to avoid plotting multiple tick labels over one another.

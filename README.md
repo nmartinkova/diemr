@@ -13,9 +13,14 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/diemr)](https://cran.r-
 downloads](https://cranlogs.r-pkg.org/badges/last-month/diemr)](https://cran.r-project.org/package=diemr)
 <!-- badges: end -->
 
-*diemr* incorporates the diagnostic index expectation maximisation
-algorithm used to estimate which genomic alleles belong to either side
-of a barrier to geneflow.
+*diemr* implements the **Diagnostic Index Expectation Maximization
+(diem) algorithm** for **genome polarization**. It estimates which
+alleles of **SNP markers** belong to either side of a barrier to gene
+flow, co-estimates individual assignment, and infers barrier strength
+and divergence. These tools are designed for studies of
+**hybridization**, **speciation**, and population divergence, and extend
+the methods described in Baird et al. (2023)
+<doi:10.1111/2041-210X.14010>.
 
 ## Installation
 
