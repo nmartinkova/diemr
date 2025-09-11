@@ -1,0 +1,370 @@
+---
+title: "diemr: Diagnostic index expectation maximisation in R"
+author: "Natália Martínková, Stuart J.E. Baird"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+   toc: true
+bibliography: refs.bib
+vignette: >
+  %\VignetteIndexEntry{diemr: Diagnostic index expectation maximisation in R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#",
+  fig.path = "figures/",
+  fig.height = 4.5, 
+  fig.width = 6 
+)
+```
+
+# Quick start {#quick}
+
+The package `diemr` incorporates the diagnostic index expectation maximisation algorithm used to 
+estimate which genomic alleles belong to which side of a barrier to gene flow. To start 
+using `diemr`, load the package or install it from CRAN if it is not yet available:
+
+```{r, setup, eval = FALSE}
+# Attempt to load a package, if the package was not available, install and load
+if(!require("diemr", character.only = TRUE)){
+    install.packages("diemr", dependencies = TRUE)
+    library("diemr", character.only = TRUE)
+}
+```
+Next, assemble paths to all files containing the data to be used by `diemr`. 
+Here, we will use a tiny example dataset that is included in the package for illustrating 
+the analysis workflow. A good practice is to check that all files contain data in the 
+correct format for all individuals and markers. Additionally, the analysis will need a 
+list with **ploidies for all genomic compartments and individuals**, and a vector with 
+**indices of samples** that will be included in the analysis.
+
+
+```{r, eval = FALSE}
+filepaths <- system.file("extdata", "data7x3.txt", package = "diemr")
+# Analysing six individuals
+samples <- 1:6
+# Assuming diploid markers of all individuals
+ploidies = rep(list(rep(2, nchar(readLines(filepaths[1])[1]) - 1)), length(filepaths))
+CheckDiemFormat(files = filepaths, 
+                ChosenInds = samples,
+                ploidy = ploidies)
+# File check passed: TRUE
+# Ploidy check passed: TRUE
+```
+
+If the `CheckDiemFormat()` function fails, work through the error messages and fix 
+the stored input files accordingly. The algorithm repeatedly accesses data from the 
+harddisk, so seeing the passed file and variable check prior to the analysis is critical.
+
+Starting from `diemr 1.4`, ploidy might now be assumed to be diploid for all individuals 
+and all sites across all compartments by default. Use this only when compartments for
+the sex chromosomes are not identified. 
+
+To estimate the marker polarities, their diagnostic indices and support, run the function 
+`diem()` with default settings. Here, we have only one file with data, so paralelisation 
+is unnecessary, and we set `nCores = 1`. **The Windows operating system only allows for 
+nCores = 1**. Other operating systems can process multiple genomic compartments (e.g. 
+chromosomes) in parallel, the analysis of different genomic compartment files running on 
+multiple processors.
+
+```{r, eval = FALSE}
+res <- diem(files = filepaths, 
+            ploidy = ploidies, 
+            markerPolarity = list(c(FALSE, FALSE, TRUE)),
+            ChosenInds = samples, 
+            nCores = 1)
+```
+
+The result is a list, where the element `res$DI` contains a table with marker 
+polarities, their diagnostic indices and support. 
+
+```{r, eval = FALSE}
+res$DI
+#   newPolarity         DI   Support Marker
+# 1       FALSE  -4.872256 15.930181      1
+# 2        TRUE  -3.520647 18.633399      2
+# 3        TRUE -13.274822  6.130625      3
+```
+
+The column `newPolarity` means that marker 1 should be imported for subsequent 
+analyses as is, and markers 2 and 3 should be imported with 0 replaced with 2 and 2 
+replaced with 0 (hereafter 'flipped' 0&harr;2). The marker 3 has the lowest diagnostic 
+index and low support, indicating 
+that the genotypes scored at this marker are poorly related to the barrier to gene flow 
+arbitrated by the data.
+
+With the marker polarities optimised to detect a barrier to gene flow, a plot of the 
+polarised genome will show how genomic regions cross the barrier. First, the genotypes
+need to be imported with optimal marker polarities. Second, individual hybrid indices 
+need to be calculated from the polarised genotypes. And last, the data will be plotted
+as a raster image.
+
+```{r, eval = FALSE}
+genotypes <- importPolarized(file = filepaths, 
+                             changePolarity = res$markerPolarity, 
+                             ChosenInds = samples)
+                             
+h <- apply(X = res$I4, 
+           MARGIN = 1, 
+           FUN = pHetErrOnStateCount)[1, ]
+           
+plotPolarized(genotypes = genotypes,
+              HI = h[samples])
+```
+```{r, echo = FALSE, fig.width = 6, fig.height = 4.5, fig.align = 'center'}
+genotypes <- diemr::importPolarized(file = system.file("extdata", "data7x3.txt",
+                         package = "diemr"), 
+                             changePolarity = c(FALSE, TRUE, TRUE), 
+                             ChosenInds = 1:6)
+h <- c(.5,0,.33,.5,.83,1)
+diemr::plotPolarized(genotypes = genotypes,
+              HI = h)
+```
+
+> <span style="color:red">CAUTION:</span> This is just a **quick start** to get you started! 
+> For real datasets you will use the diagnostic index (DI) to filter the full set of sites 
+> you have analysed with `diem` in order to plot only those markers relevant to any barrier 
+> detected in the analysis.
+
+
+
+# Input data
+
+The `diemr` package uses a consise genome representation. Let's have a small dataset 
+of three markers genotyped for seven individuals.
+
+```{r, eval = FALSE}
+S0011222
+S1210001
+S02221U0
+```
+The genotypes encoded as `0` represent homozygotes for an allele attributed to barrier side A, `1` are 
+heterozygous genotypes, `2` are homozygotes for another allele, attributed to barrier side B, and `U` 
+(symbol "_" is also allowed) represents an unknown state or a third (fourth) allele. The power of 
+`diem` lies in the assurance that the user does not need to determine the true assignment to  
+barrier sides A and B before the analysis and the specific genotypes encoded as `0` and `2` respectively 
+can be arbitrary.
+
+The leading `S` on each line of the input file ensures that the marker genotypes are 
+read in as a string on all operating systems. The `S` is dropped during import of the genotypes, and 
+the dataset is imported as a character matrix of all sites.
+
+
+
+
+# Multiple compartments with different ploidies
+
+Some genomic compartments differ between individuals in their ploidy. For example, markers located on 
+chromosome X in mammals will be diploid in females, but haploid in males. Ploidy differences between 
+individuals influence calculation of the hybrid index, which in turn has an effect on the _diem_ analysis.
+
+To set up the _diem_ analysis with multiple compartments, the markers with different individual ploidies
+must be stored in separate files. The file analysed in the [**Quick start**](#quick) chapter could contain
+markers from autosomes and an additional file will contain markers from an X
+chromosome, with individuals 2 and 6 being males. The respective ploidies for the second genomic 
+compartment
+will be `c(2, 1, 2, 2, 2, 1, 2)`. 
+
+Arguments `files` and `ploidy` will need to reflect the information, taking care that the order of filenames
+corresponds to the order of elements in the list of ploidies. `diem` cannot check that the order of the 
+elements
+is correct, only that the information is in the correct format.
+
+```{r, eval = FALSE}
+filepaths2 <- c(system.file("extdata", "data7x3.txt", package = "diemr"),
+                system.file("extdata", "data7x10.txt", package = "diemr"))
+               
+ploidies2 <- list(rep(2, 7),
+                  c(2, 1, 2, 2, 2, 1, 2))
+
+CheckDiemFormat(files = filepaths2, 
+                ChosenInds = samples,
+                ploidy = ploidies2)
+# File check passed: TRUE
+# Ploidy check passed: TRUE
+
+# Set random seed for repeatibility of null polarities (optional)
+set.seed(39583782)
+
+# Run diem with verbose = TRUE to store hybrid indices with ploidy-aware allele counts
+res2 <- diem(files = filepaths2, 
+             ploidy = ploidies2, 
+             markerPolarity = FALSE,
+             ChosenInds = samples, 
+             nCores = 1,
+             verbose = TRUE)
+```
+
+Plotting polarised genomes from multiple compartments requires separate import of the compartment data.
+The polarities in the `res2$markerPolarity` element are combined across all compartments.
+
+
+```{r, eval = FALSE}
+# Import polarized genotypes for all compartments
+genotypes2 <- importPolarized(files = filepaths2, 
+                       changePolarity = res2$markerPolarity, 
+                       ChosenInds = samples)
+                       
+# Load individual hybrid indices from a stored file
+h2 <- unlist(read.table("diagnostics/HIwithOptimalPolarities.txt"))
+
+# Plot the polarised genotypes
+plotPolarized(genotypes = genotypes2,
+              HI = h2[samples])
+```
+
+
+```{r, echo = FALSE, warning = FALSE,fig.width = 6, fig.height = 4.5, fig.align = 'center'}
+genotypes2 <- diemr::importPolarized(files = c(system.file("extdata", "data7x3.txt", package = "diemr"), 
+                 system.file("extdata", "data7x10.txt", package = "diemr")),
+                       changePolarity = c(FALSE, TRUE, TRUE,T,T,T,T,F,T,T,F,T,T), 
+                       ChosenInds = 1:6)
+h2 <- apply(genotypes2, 1, \(x) diemr::pHetErrOnStateCount(diemr::sStateCount(x)))[1, ]
+diemr::plotPolarized(genotypes = genotypes2,
+              HI = h2, lwd = 2)
+```
+
+Plotting all sites gives a good first impression on the diversity in the data. However, to 
+examine the barrier to gene flow, markers with high diagnostic index will be more 
+informative. Use the `ChosenSites` argument to specify which markers to display.
+
+```{r, eval = FALSE}
+# Select a threshold for the top diagnostic markers. 
+threshold <- quantile(res2$DI$DI, prob = 0.6)
+# Create a vector identifying the diagnostic markers at the given threshold
+markers <- res2$DI$DI > threshold
+# Import only the selected markers
+genotypes3 <- importPolarized(files = filepaths2, 
+                       changePolarity = res2$markerPolarity, 
+                       ChosenInds = samples,
+                       ChosenSites = markers)
+# Calculate hybrid index from diagnostic markers
+h3 <- apply(genotypes3, 1, FUN = function(x) pHetErrOnStateCount(sStateCount(x)))[1, ]
+# Plot diagnostic markers
+plotPolarized(genotypes3, h3)
+```
+
+```{r, echo = FALSE, warning = FALSE,fig.width = 6, fig.height = 4.5, fig.align = 'center'}
+diemr::plotPolarized(genotypes = genotypes2[, c(TRUE,TRUE,FALSE,TRUE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE)],
+              HI = c(.3,0,.5,.3,.4,1), lwd = 2)
+```
+
+ 
+
+# Frequently asked questions
+
+1. **How can I install `diemr` from the source?**
+
+```{r, eval = FALSE}
+install.packages(package = "diemr_1.4.2.tar.gz",
+                 repos = NULL, type = "source")
+```
+
+Make sure to set the `R` working directory to the folder, where the package tarball is stored, 
+or include a full path to the file within the quotes. Update the version number to the specific 
+file.
+
+2. **How can I calculate the hybrid indices from my polarised data?**
+
+There are two options. First, use `diem` with argument `verbose = TRUE` and hybrid indices 
+will be stored in a text file in the diagnostics folder in the working directory. The stored 
+values will **not** be ploidy-aware. Additionally, these hybrid indices are blind to the 
+diagnostic index of the markers. Hybrid indices should be calculated only on the most 
+diagnostic markers. To calculate the hybrid 
+indices without the small data correction use the `I4` matrix in the `diem` output  (See 
+FAQ on Hybrid indices below on how to first filter markers based on their diagnosticity). 
+
+```{r, eval = FALSE}
+apply(res$I4, MARGIN = 1, FUN = pHetErrOnStateCount)
+#          [,1] [,2]      [,3]      [,4]      [,5]      [,6]
+# p   0.5000000    0 0.3333333 0.5000000 0.8333333 1.0000000
+# Het 0.3333333    0 0.6666667 0.3333333 0.3333333 0.0000000
+# Err 0.0000000    0 0.0000000 0.0000000 0.0000000 0.3333333
+```
+
+To calculate the hybrid indices while ignoring uninformative sites (which will force all 
+hybrid indices towards 0.5), filter the `importPolarised` data by the DI of each site.
+
+
+3. **I expect more than two groups of samples in my data. Can I use `diemr`?**
+
+Yes. Multiple barriers to gene flow between multiple groups of samples can be identified iteratively 
+with help from the argument `ChosenInds`. For example, let's assume that the individual 2 was 
+identified as belonging to one side of the barrier and being separated from other by the steepest 
+change in the hybrid index. In the next `diem` run, we exclude the individual 2.
+
+```{r, eval = FALSE}
+samples2 <- c(1, 3:6)
+CheckDiemFormat(files = filepaths, 
+                ChosenInds = samples2, 
+                ploidy = ploidies)
+# File check passed: TRUE
+# Ploidy check passed: TRUE
+
+res2 <- diem(files = filepaths, 
+             ChosenInds = samples2,
+             ploidy = ploidies,
+             nCores = 1,
+             markerPolarity = list(c(FALSE, FALSE, TRUE)))
+             
+# calculate hybrid indices from updated I4
+h.res2 <- apply(res2$I4, 
+                MARGIN = 1, 
+                FUN = pHetErrOnStateCount)[1, ]
+                
+# set names for the hybrid index values
+h.res2 <- setNames(h.res2, nm = samples2)
+#    1    3    4    5    6 
+# 0.50 0.33 0.50 0.83 1.00 
+
+# calculate the center of the maximum hybrid index change
+diffs <- data.frame(rollmean = zoo::rollmean(sort(h.res2), k = 2),
+                    diff = diff(sort(h.res2), lag = 1))
+h.res2.c <- diffs$rollmean[which.max(diffs$diff)]
+# [1] 0.6666667
+```
+Since the center of the barrier is at 0.67 now, `diem` separated individuals 1, 3, and 4 
+from a group that includes 5, 6. Combined with the result from the first `diem` run, we 
+have identified three groups in the dataset: (2), (1, 3, 4), and (5, 6).
+
+
+4. **The hybrid indices in my dataset are too similar. I expected them to look more like 
+the rescaled hybrid indices. What is wrong?**
+
+The input data probably contains invariant sites. These cannot be polarised, and so will
+keep their initial random polarisation, making all hybrid indices tend to 0.5. A filter 
+removing all invariant sites before analysis will speed up analysis, but it will not 
+eliminate the problem because (1) sequencing errors will make invariant sites appear 
+variant, or (2) variant sites can have variation irrelevant to a `diem` barrier.  
+We recommend you filter sites by diagnostic index (DI) after the `diem` analysis to 
+recalculate hybrid indices (and plot genotypes) with only the most diagnostic markers.
+ 
+```{r, eval = FALSE}
+# Select 40% of markers with the highest diagnostic index
+threshold <- quantile(res2$DI$DI, prob = 0.6)
+genotypes3 <- genotypes2[, res2$DI$DI > threshold]
+# Recalculate I4 and hybrid indices
+h3 <- apply(genotypes3, 
+            MARGIN = 1,
+            FUN = \(x) pHetErrOnStateCount(sStateCount(x)))[1, ]
+# Plot the polarised markers
+plotPolarized(genotypes3, h3)
+```
+
+```{r, echo = FALSE}
+genotypes3 <- genotypes2[, c(1,2,4,10,11)]
+h3 <- apply(genotypes3, 
+            MARGIN = 1,
+            FUN = \(x) diemr::pHetErrOnStateCount(diemr::sStateCount(x)))[1, ]
+diemr::plotPolarized(genotypes3, h3)
+```
+
+
+5. **How to cite `diemr`?**
+
+To use `diemr` in a publication, please cite [@Baird2023].
+

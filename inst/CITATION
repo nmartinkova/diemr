@@ -1,0 +1,36 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+
+bibentry(bibtype = "article",
+  title        = "Genome polarisation for detecting barriers to geneflow",
+  author       = c(person(c("Stuart J. E."), "Baird"),
+  					person("Jan", "Petruzela"),
+  					person("Izar", "Jaron"),
+  					person("Pavel", "Skrabanek"),
+  					person("Natalia", "Martinkova")
+                   ),
+  year         = "2023",
+  journal	   = "Methods in Ecology and Evolution",
+  volume	   = "14",
+  pages		   = "512-528",
+  doi          = "10.1111/2041-210X.14010",
+
+  textVersion  =
+  paste("Baird S. J. E., Petruzela J., Jaron I., Skrabanek P., and Martinkova N. (2023).",
+        "Genome polarisation for detecting barriers to geneflow.",
+        "Methods in Ecology and Evolution 14, 512-528, doi: https://doi.org/10.1111/2041-210X.14010.")
+)
+
+bibentry(bibtype = "Manual", 
+		 title = "{diemr}: Genome polarisation for detecting barriers to geneflow in {R}",
+		 author = c(person(c("Stuart J. E."), "Baird"),
+  					person("Jan", "Petruzela"),
+  					person("Izar", "Jaron"),
+  					person("Pavel", "Skrabanek"),
+  					person("Natalia", "Martinkova")
+                   ),
+		 year = year,
+		 note = note,
+		 doi = "10.32614/CRAN.package.diemr",
+		 url = "https://CRAN.R-project.org/package=diemr")
