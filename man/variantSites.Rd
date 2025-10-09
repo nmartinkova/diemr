@@ -48,8 +48,10 @@ Windows computers must use \code{nCores = 1}. systems.
 }
 \examples{
 # Run this example in a folder with write permission
-files <- c(system.file("extdata", "data7x3.txt", package = "diemr"),
-           system.file("extdata", "data7x10.txt", package = "diemr"))
+files <- c(
+  system.file("extdata", "data7x3.txt", package = "diemr"),
+  system.file("extdata", "data7x10.txt", package = "diemr")
+)
 \dontrun{
 
 variant1 <- variantSites(files, filename = "v1.txt")

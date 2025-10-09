@@ -9,7 +9,8 @@ vcf2diem(
   filename,
   chunk = 1L,
   requireHomozygous = TRUE,
-  ChosenInds = "all"
+  ChosenInds = "all",
+  bed = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,9 @@ homozygous individual(s) for each allele.}
 
 \item{ChosenInds}{A numeric or logical vector of indices of individuals to be included
 in the analysis.}
+
+\item{bed}{Logical. If \code{TRUE}, export \code{includedSites} and \code{omittedSites}
+in 3-column BED format.}
 }
 \value{
 No value returned, called for side effects.
@@ -61,25 +65,28 @@ in diem format will contain \code{chunk} number of lines with the data in \code{
 
 When the vcf file contains markers not informative for genome polarisation,
 those are removed and listed in a file ending with \emph{omittedSites.txt} in the
-directory specified in the \code{SNP} argument or in the working directory.
-The omitted loci are identified by their information in the CHROM and POS columns,
+directory specified in the \code{filename} argument or in the working directory.
+The omitted loci are identified by their values in the CHROM and POS columns,
 and include the QUAL column data. The last column is an integer specifying
-the reason why the respective marker was omitted. The reasons why markers are
+the reason why the respective marker was omitted. The reasons markers are
 not informative for genome polarisation using \code{diem} are:
 \enumerate{
 \item Marker has fewer than 2 alleles representing substitutions.
-\item Required homozygous individuals for the 2 most frequent alleles are not present
-(optional, controlled
-by the \code{requireHomozygous} argument).
+\item Required homozygous individuals for the two most frequent alleles are not present
+(optional, controlled by the \code{requireHomozygous} argument).
 \item The second most frequent allele is found only in one heterozygous individual.
 \item Dataset is invariant for the most frequent allele.
 \item Dataset is invariant for the allele listed as the first ALT in the vcf input.
 }
 
-The CHROM, POS, and QUAL information for loci included in the converted files are
-listed in the file ending with \emph{includedSites.txt}. Additional columns show which
-allele is
-encoded as 0 in its homozygous state and which is encoded as 2.
+The CHROM, POS, and QUAL information for loci included in the converted files is
+listed in the file ending with \emph{includedSites.txt}. An additional column shows which
+allele is encoded as 0 in its homozygous state and which is encoded as 2.
+
+When \code{bed = TRUE}, both \emph{includedSites.txt} and \emph{omittedSites.txt} contain
+simplified 0-based site coordinates in the standard 3-column BED format: chromosome,
+start (POS - 1), and end (POS). All other columns described above are omitted in
+this case.
 }
 \examples{
 \dontrun{

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# diemr
+# diemr: Genome polarisation in R
 
 <!-- badges: start -->
 
@@ -14,13 +14,16 @@ downloads](https://cranlogs.r-pkg.org/badges/last-month/diemr)](https://cran.r-p
 <!-- badges: end -->
 
 *diemr* implements the **Diagnostic Index Expectation Maximization
-(diem) algorithm** for **genome polarization**. It estimates which
-alleles of **SNP markers** belong to either side of a barrier to gene
-flow, co-estimates individual assignment, and infers barrier strength
-and divergence. These tools are designed for studies of
-**hybridization**, **speciation**, and population divergence, and extend
-the methods described in Baird et al. (2023)
-<doi:10.1111/2041-210X.14010>.
+(diem) algorithm** for **genome polarization** in `R`. It estimates
+which alleles of single nucleotide variant (SNV) sites belong to either
+side of a barrier to gene flow, co-estimates individual assignment, and
+infers barrier strength and divergence. These tools are designed for
+studies of **hybridization**, **speciation**, and population divergence,
+and extend the methods described in Baird et al. (2023) Genome
+polarisation for detecting barriers to geneflow. *Methods in Ecology and
+Evolution 14*, 512-528 <doi:10.1111/2041-210X.14010>. For the original
+algorithm description and implementations in `Python` and `Mathematica`,
+see the *diem* repository at <https://github.com/StuartJEBaird/diem>.
 
 ## Installation
 

@@ -12,9 +12,9 @@
 #' @details Allele counts are genomic state counts multiplied by ploidy. As different
 #'   compartments might have different ploidies (e.g. autosomal markers, sex chromosomes,
 #'   mitochondrial markers), allele counts should be calculated per compartment and then
-#'   summarised to obtain the correct genomic allele counts.   
-#'   When all individuals in each compartmenst have the same ploidy, state counts do 
-#'   not need to be corrected. 
+#'   summarised to obtain the correct genomic allele counts.
+#'   When all individuals in each compartmenst have the same ploidy, state counts do
+#'   not need to be corrected.
 #' @examples
 #' pHetErrOnStateCount(sCount = c(2, 4, 2, 6))
 #' #         p       Het       Err
@@ -23,7 +23,6 @@
 #' @importFrom stats setNames
 
 pHetErrOnStateCount <- function(sCount) {
-
   # vectorize the data
   if (inherits(sCount, "matrix")) {
     sCount <- c(sCount)

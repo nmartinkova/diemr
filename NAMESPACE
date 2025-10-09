@@ -3,6 +3,7 @@
 export(CheckDiemFormat)
 export(diem)
 export(emPolarise)
+export(hybridIndex)
 export(importPolarized)
 export(pHetErrOnStateCount)
 export(plotDeFinetti)

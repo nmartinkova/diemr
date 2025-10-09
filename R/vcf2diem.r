@@ -11,6 +11,8 @@
 #' @param requireHomozygous A logical or numeric vector indicating whether to require the marker
 #' to have at least one or more
 #'     homozygous individual(s) for each allele.
+#' @param bed Logical. If \code{TRUE}, export \code{includedSites} and \code{omittedSites} 
+#'     in 3-column BED format.
 #' @inheritParams diem
 #'
 #' @details Importing vcf files larger than 1GB, and those containing multiallelic
@@ -37,23 +39,26 @@
 #'
 #'    When the vcf file contains markers not informative for genome polarisation,
 #'    those are removed and listed in a file ending with *omittedSites.txt* in the
-#'    directory specified in the \code{SNP} argument or in the working directory.
-#'    The omitted loci are identified by their information in the CHROM and POS columns,
+#'    directory specified in the \code{filename} argument or in the working directory.
+#'    The omitted loci are identified by their values in the CHROM and POS columns,
 #'    and include the QUAL column data. The last column is an integer specifying
-#'    the reason why the respective marker was omitted. The reasons why markers are
+#'    the reason why the respective marker was omitted. The reasons markers are
 #'    not informative for genome polarisation using \code{diem} are:
 #'    1. Marker has fewer than 2 alleles representing substitutions.
-#'    2. Required homozygous individuals for the 2 most frequent alleles are not present
-#'    (optional, controlled
-#'    by the \code{requireHomozygous} argument).
+#'    2. Required homozygous individuals for the two most frequent alleles are not present
+#'       (optional, controlled by the \code{requireHomozygous} argument).
 #'    3. The second most frequent allele is found only in one heterozygous individual.
 #'    4. Dataset is invariant for the most frequent allele.
 #'    5. Dataset is invariant for the allele listed as the first ALT in the vcf input.
 #'
-#'    The CHROM, POS, and QUAL information for loci included in the converted files are
-#'    listed in the file ending with *includedSites.txt*. Additional columns show which
-#'    allele is
-#'    encoded as 0 in its homozygous state and which is encoded as 2.
+#'    The CHROM, POS, and QUAL information for loci included in the converted files is
+#'    listed in the file ending with *includedSites.txt*. An additional column shows which
+#'    allele is encoded as 0 in its homozygous state and which is encoded as 2.
+#'
+#'    When \code{bed = TRUE}, both *includedSites.txt* and *omittedSites.txt* contain
+#'    simplified 0-based site coordinates in the standard 3-column BED format: chromosome, 
+#'    start (POS - 1), and end (POS). All other columns described above are omitted in 
+#'    this case.
 #' @return No value returned, called for side effects.
 #' @importFrom vcfR getFIX extract.gt
 #' @importFrom tools file_ext file_path_sans_ext
@@ -70,7 +75,7 @@
 #' vcf2diem(SNP = myofile, filename = "test1")
 #' vcf2diem(SNP = myofile, filename = "test2", chunk = 3)
 #' }
-vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, ChosenInds = "all") {
+vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, ChosenInds = "all", bed = FALSE) {
   if (!inherits(SNP, c("character", "vcfR"), which = FALSE)) {
     stop("'SNP' must be either a 'vcfR' object or a 'character' string with path to a vcf file.")
   }
@@ -121,8 +126,8 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     filename <- filepath
     # file names for loci positions
     lociFiles <- c(
-      paste0(filepath, "-omittedSites.txt"),
-      paste0(filepath, "-includedSites.txt"),
+      paste0(filepath, "-omittedSites.", ifelse(bed, "bed", "txt")),
+      paste0(filepath, "-includedSites.", ifelse(bed, "bed", "txt")),
       paste0(filepath, "-sampleNames.txt")
     )
     # estimate chunk size
@@ -157,9 +162,13 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     # attempt to resolve sites with indels in REF and ALT
     INFO[, 4] <- sub("\\*|\\.", "AA", INFO[, 4])
     INFO[, 5] <- sub("\\*|\\.", "AA", INFO[, 5])
-    ALLELES <- apply(INFO[, 4:5, drop = FALSE], 1, FUN = function(x) { paste(x[1], x[2], sep = ",") } )
+    ALLELES <- apply(INFO[, 4:5, drop = FALSE], 1, FUN = function(x) {
+      paste(x[1], x[2], sep = ",")
+    })
     resolvable <- lapply(strsplit(ALLELES, ",", fixed = TRUE),
-      FUN = function(x) { which(nchar(x) == 1) - 1 } # allele numbers, not indices; removes allele numbers for indels
+      FUN = function(x) {
+        which(nchar(x) == 1) - 1
+      } # allele numbers, not indices; removes allele numbers for indels
     )
     resolvable[lengths(resolvable) <= 1] <- NA # sets markers as not resolvable if less than 2 substitutions remain
     reason <- 1
@@ -216,24 +225,40 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     }
 
     if (any(nonInformative)) {
-      cat(paste(c(INFO[nonInformative, c(1:2, 6)], reason), collapse = "\t"),
-        file = omittedSites,
-        sep = "\n",
-        append = TRUE
-      )
-    } else {
-      cat(
-        paste(
-          c(
-            INFO[!nonInformative, c(1:2, 6)],
-            strsplit(ALLELES, ",", fixed = TRUE)[[1]][as.numeric(majorAlleles) + 1]
+      if (bed) {
+        # BED: CHR, POS-1, POS
+        cat(
+          paste(INFO[nonInformative, 1], as.integer(INFO[nonInformative, 2]) - 1, INFO[nonInformative, 2],
+            sep = "\t"
           ),
-          collapse = "\t"
-        ),
-        file = includedSites,
-        sep = "\n",
-        append = TRUE
-      )
+          file = omittedSites, sep = "\n", append = TRUE
+        )
+      } else {
+        cat(paste(c(INFO[nonInformative, c(1:2, 6)], reason), collapse = "\t"),
+          file = omittedSites, sep = "\n", append = TRUE
+        )
+      }
+    } else {
+      if (bed) {
+        # BED: CHR, POS-1, POS
+        cat(
+          paste(INFO[!nonInformative, 1], as.integer(INFO[!nonInformative, 2]) - 1, INFO[!nonInformative, 2],
+            sep = "\t"
+          ),
+          file = includedSites, sep = "\n", append = TRUE
+        )
+      } else {
+        cat(
+          paste(
+            c(
+              INFO[!nonInformative, c(1:2, 6)],
+              strsplit(ALLELES, ",", fixed = TRUE)[[1]][as.numeric(majorAlleles) + 1]
+            ),
+            collapse = "\t"
+          ),
+          file = includedSites, sep = "\n", append = TRUE
+        )
+      }
     }
 
     return(SNP[!nonInformative, ])

@@ -49,7 +49,7 @@ its chromosomal context to ensure accurate window placement.
 
 Minimum value of \code{windowSize} is equal to 3, but in genomic data evaluations, window
 size should be at least two orders of magnitude larger. A good approximation of a
-useful minimum window size is $(genome size) / ((number of SNPSs) / 2)$. Throughout the
+useful minimum window size is \eqn{(genome size) / ((number of SNPSs) / 2)}. Throughout the
 diemr package, \code{windowSize} refers to the genomic context of the respective SNP
 that the user wishes to consider when smoothing over the polarized genomic states.
 }

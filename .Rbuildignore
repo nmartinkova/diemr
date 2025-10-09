@@ -2,3 +2,5 @@
 ^doc$
 ^Meta$
 ^README\.Rmd$
+^CITATION\.cff$
+^README\.html$

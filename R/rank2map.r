@@ -29,7 +29,7 @@
 #'
 #' Minimum value of \code{windowSize} is equal to 3, but in genomic data evaluations, window
 #' size should be at least two orders of magnitude larger. A good approximation of a
-#' useful minimum window size is $(genome size) / ((number of SNPSs) / 2)$. Throughout the 
+#' useful minimum window size is \eqn{(genome size) / ((number of SNPSs) / 2)}. Throughout the 
 #' diemr package, \code{windowSize} refers to the genomic context of the respective SNP
 #' that the user wishes to consider when smoothing over the polarized genomic states.
 #'
@@ -39,7 +39,7 @@
 #' to chromosomes, this is not necessarily the case. 
 #' @author Natalia Martinkova
 #' @author Filip Jagos <521160@mail.muni.cz>
-#' @returns A two-column matrix with the number of rows corresponding to the number of 
+#' @return A two-column matrix with the number of rows corresponding to the number of 
 #'   \code{ChosenSites}, indicating start and end indices of adjacent markers that are 
 #'   within an interval of length \code{windowSize} centered on the specific marker.
 #' @export
@@ -63,7 +63,7 @@ rank2map <- function(includedSites, ChosenSites = "all", windowSize = 1e+07, nCo
   # chromosome indices
   CHROMlengths <- c(1, rle(bed$CHROM)$lengths)
   iChrom <- sapply(1:(length(CHROMlengths) - 1), FUN = function(i) {
-    c(sum(CHROMlengths[1:i]):sum(CHROMlengths[1:i+1]))
+    c(sum(CHROMlengths[1:i]):sum(CHROMlengths[1:(i+1)]))
   })
 
   # indices per chromosome

@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "If you use diemr, please cite the following paper:"
+title: "diemr: Genome polarisation for detecting barriers to geneflow in R"
+version: "1.5"
+authors:
+  - family-names: "Martínková"
+    given-names: "Natália"
+  - family-names: "Baird"
+    given-names: "Stuart J. E."
+date-released: "2025-09-11"
+doi: "10.1111/2041-210X.14010"
+url: "https://CRAN.R-project.org/package=diemr"
+repository-code: "https://github.com/nmartinkova/diemr"
+keywords:
+  - R
+  - genomics
+  - bioinformatics
+  - hybridization
+  - speciation
+  - genome polarisation
+  - genome polarization
+  - diem
+  - diemr
+license: "GPL-3.0"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Baird"
+    given-names: "Stuart J. E."
+  - family-names: "Petružela"
+    given-names: "Jan"
+  - family-names: "Jaroň"
+    given-names: "Izar"
+  - family-names: "Škrabánek"
+    given-names: "Pavel"
+  - family-names: "Martínková"
+    given-names: "Natália"
+  doi: "10.1111/2041-210X.14010"
+  journal: "Methods in Ecology and Evolution"
+  start: 512 # First page number
+  end: 528 # Last page number
+  title: "Genome polarisation for detecting barriers to geneflow"
+  volume: 14
+  year: 2023

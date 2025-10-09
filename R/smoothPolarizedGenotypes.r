@@ -29,8 +29,9 @@
 #' The scale parameter is equal to:
 #' \deqn{b = \frac{\text{windowSize}}{2 \ln(20)}.}
 #' 
+#' @return A matrix with smoothed genotypes, rows representing individuals and columns sites.
 #' @importFrom stats aggregate
-#' @seealso \link{rank2map}
+#' @seealso \link{rank2map}, \link{unbiasedWeightedStateChoice}
 #' @export
 #' @examples
 #'  \dontrun{
@@ -39,7 +40,7 @@
 #'  vcf2diem(myo, "myo")
 #'  fit <- diem("myo-001.txt", ChosenInds = 1:14)
 #'  gen <- importPolarized("myo-001.txt", changePolarity = fit$markerPolarity, ChosenInds = 1:14)
-#'  h <- apply(gen, 1, \(x) pHetErrOnStateCount(sStateCount(x)))[1, ]
+#'  h <- hybridIndex(gen)
 #'  gen2 <- smoothPolarizedGenotypes(genotypes = gen, 
 #'     includedSites = "myo-includedSites.txt", windowSize = 50)
 #'  plotPolarized(gen, h)

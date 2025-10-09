@@ -12,7 +12,7 @@
 #' @param HWE Logical indicating whether to plot the curve for Hardy-Weinberg Equilibrium.
 #' @param tipLabels A character vector of length 3 with names for the ternary plot vertices.
 #' @param ... additional graphical parameters (see \link[graphics]{plot.default}).
-#' @details To import and polarize genotypes, use the \link{importPolarized} function. 
+#' @details To import and polarize genotypes, use the \link{importPolarized} function.
 #'   Alternatively, the I4 matrix can be used as input for \code{genotypes}.
 #'
 #' @return No return value; the function is called for its side effects.
@@ -41,17 +41,17 @@ plotDeFinetti <- function(genotypes, cols, HWE = TRUE, tipLabels = c("Homozygous
   userArgs <- list(...)
 
 
-	if(ncol(genotypes) == 4){
-	  nMarkers <- rowSums(genotypes[, 2:4])
-	  freq0 <- genotypes[, 2] / nMarkers
-	  freq1 <- genotypes[, 3] / nMarkers
-	  freq2 <- genotypes[, 4] / nMarkers
-	} else {
-      nMarkers <- rowSums(matrix(genotypes %in% c("0", "1", "2"), nrow = nrow(genotypes)))
-      freq0 <- rowSums(genotypes == "0") / nMarkers
-      freq1 <- rowSums(genotypes == "1") / nMarkers
-      freq2 <- rowSums(genotypes == "2") / nMarkers
-    }
+  if (ncol(genotypes) == 4) {
+    nMarkers <- rowSums(genotypes[, 2:4])
+    freq0 <- genotypes[, 2] / nMarkers
+    freq1 <- genotypes[, 3] / nMarkers
+    freq2 <- genotypes[, 4] / nMarkers
+  } else {
+    nMarkers <- rowSums(matrix(genotypes %in% c("0", "1", "2"), nrow = nrow(genotypes)))
+    freq0 <- rowSums(genotypes == "0") / nMarkers
+    freq1 <- rowSums(genotypes == "1") / nMarkers
+    freq2 <- rowSums(genotypes == "2") / nMarkers
+  }
 
   if (HWE) {
     p <- seq(0, 1, length.out = 100)

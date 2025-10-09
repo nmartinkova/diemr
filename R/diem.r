@@ -8,12 +8,12 @@
 #'
 #'
 #' @param files A character vector with paths to files with genotypes.
-#' @param ploidy A logical or a list of length equal to length of \code{files}. Each 
+#' @param ploidy A logical or a list of length equal to length of \code{files}. Each
 #'   element of the list
 #'   contains a numeric vector with ploidy numbers for all individuals specified in
 #'   the \code{files}.
 #' @param markerPolarity \code{FALSE} or a list of logical vectors.
-#' @param ChosenInds A numeric or logical vector of indices of individuals to be included 
+#' @param ChosenInds A numeric or logical vector of indices of individuals to be included
 #'   in the analysis.
 #' @param ChosenSites A logical vector indicating which sites are to be included in the
 #'    analysis.
@@ -53,12 +53,12 @@
 #'   chromosomes, but males only one, and females have no Y chromosomes:
 #'   \code{ploidy = list(rep(2, 3), c(1, 2, 2), c(1, 0, 0))}.
 #'
-#'   When a subset of individuals is used to inform the genome polarisation in the 
-#'   \code{ChosenInds} argument, \code{ploidy} must still be provided for all individuals 
-#'   included in the \code{files}. 
+#'   When a subset of individuals is used to inform the genome polarisation in the
+#'   \code{ChosenInds} argument, \code{ploidy} must still be provided for all individuals
+#'   included in the \code{files}.
 #'
-#'   \code{ChosenInds} should preferably be numeric values within the range from 1 to the 
-#'   number of individuals in the \code{files}. Logical vectors must have a length equal  
+#'   \code{ChosenInds} should preferably be numeric values within the range from 1 to the
+#'   number of individuals in the \code{files}. Logical vectors must have a length equal
 #'   to the number of individuals in the \code{files}.
 #'
 #'   When \code{verbose = TRUE}, \code{diem} will output multiple files with information
@@ -112,7 +112,7 @@ diem <- function(files, ploidy = FALSE, markerPolarity = FALSE, ChosenInds,
                  maxIterations = 50, ...) {
   if (is.na(nCores)) nCores <- 1
   if (nCores > parallel::detectCores()) nCores <- parallel::detectCores()
-  if(inherits(ChosenInds, "logical")){
+  if (inherits(ChosenInds, "logical")) {
     ChosenInds <- which(ChosenInds)
   }
 
@@ -486,7 +486,9 @@ diem <- function(files, ploidy = FALSE, markerPolarity = FALSE, ChosenInds,
     toBeCompartmentalized = ChosenSites
   )
 
-  nOmittedSitesPerCompartment <- lapply(ChosenSites, FUN = function(x) { c(sum(!x), 0, 0, 0) })
+  nOmittedSitesPerCompartment <- lapply(ChosenSites, FUN = function(x) {
+    c(sum(!x), 0, 0, 0)
+  })
 
 
 
@@ -742,10 +744,10 @@ diem <- function(files, ploidy = FALSE, markerPolarity = FALSE, ChosenInds,
       capture.output(round(FlatLogI4[1:min(28, length(FlatLogI4))], 2), file = logfile, append = TRUE)
     }
 
-    
+
     # memory management
     invisible(capture.output(gc()))
-    
+
     # end one iteration
     IterationCount <- IterationCount + 1
   } # end while for cycle limit
@@ -754,7 +756,7 @@ diem <- function(files, ploidy = FALSE, markerPolarity = FALSE, ChosenInds,
   Finalising <- TRUE
   message("Finalising diem output ", Sys.time())
 
-  if(IterationCount > maxIterations){
+  if (IterationCount > maxIterations) {
     DI <- summariseDIacrossCompartments(iteration = maxIterations)
   } else {
     DI <- summariseDIacrossCompartments(iteration = ExistingLCcandidate[[2]][1] + 1)

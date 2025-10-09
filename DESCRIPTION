@@ -20,6 +20,7 @@ Description: Implements a likelihood-based method for genome polarization, ident
     for visualization and diagnostic outputs. Based on diagnostic index expectation
     maximization as described in Baird et al. (2023) <doi:10.1111/2041-210X.14010>.
 BugReports: https://github.com/nmartinkova/diemr/issues
+URL: https://nmartinkova.github.io/genome-polarisation/
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

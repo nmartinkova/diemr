@@ -24,7 +24,6 @@
 
 
 ModelOfDiagnostic <- function(I4, OriginalHI, epsilon = 0.99, verbose = FALSE, folder = "likelihood", ...) {
-
   # if the whole matrix of individuals statistics is provided, select only the hybrid index
   # assumes result from pHetErrOnStateCount()
   if (inherits(OriginalHI, "matrix")) {
@@ -79,7 +78,7 @@ ModelOfDiagnostic <- function(I4, OriginalHI, epsilon = 0.99, verbose = FALSE, f
 
     # write diagnostics
     if (verbose) {
-      if(!dir.exists(folder)) dir.create(folder)
+      if (!dir.exists(folder)) dir.create(folder)
       pdf(paste0(folder, "/SortedRescaledHybridIndex.pdf"), height = 5)
       plot(SRHI,
         xlab = "Inds sorted by rescaled hybrid index", ylab = "Rescaled hybrid index",

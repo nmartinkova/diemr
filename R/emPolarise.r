@@ -2,12 +2,12 @@
 #'
 #' Changes encodings of genomic markers according to user specification.
 #'
-#' @param changePolarity A logical scalar, indicating whether to leave the marker as is 
+#' @param changePolarity A logical scalar, indicating whether to leave the marker as is
 #'     (\code{FALSE}) or whether to change its polarity (\code{TRUE}).
 #' @param origM A character vector of genotypes comprising of _012 encodings.
 #' @return Returns a character vector with polarised markers.
-#' @note Note that \link{diem} and \link{importPolarized} accept also a `U` 
-#'   encoding for an unknown or third allele, but \code{emPolarise} requires all `U` to 
+#' @note Note that \link{diem} and \link{importPolarized} accept also a `U`
+#'   encoding for an unknown or third allele, but \code{emPolarise} requires all `U` to
 #'   be replaced with `_`.
 #' @export
 #' @seealso \code{\link{diem}} for determining appropriate marker polarity with

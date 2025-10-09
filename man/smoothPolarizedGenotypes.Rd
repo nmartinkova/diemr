@@ -30,6 +30,9 @@ calculates the windows using \link{rank2map}.}
 
 \item{...}{Additional arguments to be passed to \link{rank2map} if \code{windows = NULL}.}
 }
+\value{
+A matrix with smoothed genotypes, rows representing individuals and columns sites.
+}
 \description{
 This function smooths polarized genotype states using a Laplace kernel density estimation.
 It calculates a smoothed version of the genotype states over specified physical extent
@@ -61,7 +64,7 @@ The scale parameter is equal to:
  vcf2diem(myo, "myo")
  fit <- diem("myo-001.txt", ChosenInds = 1:14)
  gen <- importPolarized("myo-001.txt", changePolarity = fit$markerPolarity, ChosenInds = 1:14)
- h <- apply(gen, 1, \(x) pHetErrOnStateCount(sStateCount(x)))[1, ]
+ h <- hybridIndex(gen)
  gen2 <- smoothPolarizedGenotypes(genotypes = gen, 
     includedSites = "myo-includedSites.txt", windowSize = 50)
  plotPolarized(gen, h)
@@ -69,5 +72,5 @@ The scale parameter is equal to:
  }
 }
 \seealso{
-\link{rank2map}
+\link{rank2map}, \link{unbiasedWeightedStateChoice}
 }

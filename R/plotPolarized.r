@@ -5,7 +5,7 @@
 #'
 #' @param genotypes A character matrix with _012 encoding of genotypes. Rows represent
 #'   individuals, columns represent markers.
-#' @param HI A numeric vector of hybrid indices, one per individual (row in 
+#' @param HI A numeric vector of hybrid indices, one per individual (row in
 #'   \code{genotypes}).
 #' @param cols A vector of four colors representing: missing data, homozygotes for 0,
 #'   heterozygotes, and homozygotes for 2 (in that order).
@@ -29,7 +29,7 @@
 #' the steepest hybrid index gradient. The second and fourth colors in \code{cols} are used
 #' for these ticks. You can:
 #' * Disable the ticks using \code{tick = FALSE},
-#' * Provide a vector of tick colors (must match the number of individuals), 
+#' * Provide a vector of tick colors (must match the number of individuals),
 #'   **ordered according to \code{order(HI)}**,
 #' * Provide individual \code{labels} (e.g., accession numbers) in the same order as the
 #'   rows in \code{genotypes}.
@@ -59,7 +59,7 @@
 #' * Purple and teal represent homozygotes (`0` and `2`),
 #' * Yellow represents heterozygotes (`1`),
 #' * White indicates missing or undetermined genotypes (`_`).
-#' Individuals are ordered by increasing \code{HI} (bottom up in rectangular plots and 
+#' Individuals are ordered by increasing \code{HI} (bottom up in rectangular plots and
 #' inside out in circular plots).
 #'
 #' @seealso \link{plotMarkerAxis} for adding chromosome information as a custom
@@ -175,11 +175,11 @@ plotPolarized <- function(
   }
 
   # order genotypes
-  if(type == "rectangle"){
-  genotypes <- genotypes[order(HI), ]
+  if (type == "rectangle") {
+    genotypes <- genotypes[order(HI), ]
   } else {
-  genotypes <- genotypes[rev(order(HI)), ]
-  axisArgs$col.ticks <- rev(axisArgs$col.ticks)
+    genotypes <- genotypes[rev(order(HI)), ]
+    axisArgs$col.ticks <- rev(axisArgs$col.ticks)
   }
 
   # plot rectangular plot
