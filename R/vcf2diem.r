@@ -283,8 +283,14 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
   sampleNames <- outputs[[4]][3]
 
   # initialize loci placement files
-  cat("## Reasons for omitting loci:\n## 1 - Marker has fewer than 2 alleles representing substitutions\n## 2 - Required homozygous individuals for the 2 most frequent alleles are not present\n## 3 - The second most frequent allele is found only in one heterozygous individual\n## 4 - Dataset is invariant for the most frequent allele\n## 5 - Dataset is invariant for the allele listed as the first ALT in the vcf input\nCHROM\tPOS\tQUAL\tREASON\n", file = omittedSites, append = FALSE)
-  cat("CHROM\tPOS\tQUAL\tallele0\tallele2\n", file = includedSites, append = FALSE)
+  if(bed){
+    cat("", file = omittedSites, append = FALSE)
+    cat("", file = includedSites, append = FALSE)
+
+  } else {
+    cat("## Reasons for omitting loci:\n## 1 - Marker has fewer than 2 alleles representing substitutions\n## 2 - Required homozygous individuals for the 2 most frequent alleles are not present\n## 3 - The second most frequent allele is found only in one heterozygous individual\n## 4 - Dataset is invariant for the most frequent allele\n## 5 - Dataset is invariant for the allele listed as the first ALT in the vcf input\nCHROM\tPOS\tQUAL\tREASON\n", file = omittedSites, append = FALSE)
+    cat("CHROM\tPOS\tQUAL\tallele0\tallele2\n", file = includedSites, append = FALSE)
+  }
   cat("sampleNames\n", file = sampleNames, append = FALSE)
 
 

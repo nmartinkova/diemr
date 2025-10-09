@@ -1,3 +1,8 @@
+# diemr 1.5.2
+
+- Integrated BED-format support into internal functions.
+
+
 # diemr 1.5.1, released 09-10-2025
 
 - Added `hybridIndex` function that returns a numeric vector suitable for plotting.

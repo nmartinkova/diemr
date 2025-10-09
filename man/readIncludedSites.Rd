@@ -12,7 +12,7 @@ readIncludedSites(includedSites, ChosenSites = "all")
 \item{ChosenSites}{Logical or numeric vector specifying sites to retain, or \code{"all"} to keep all sites.}
 }
 \value{
-A data frame containing the selected sites.
+A data frame containing the selected sites with 1-based coordinates.
 }
 \description{
 Imports a BED-like file and optionally subsets sites.
