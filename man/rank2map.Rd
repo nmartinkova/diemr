@@ -60,12 +60,12 @@ of compartment files is parallelized. Note that while compartment files can corr
 to chromosomes, this is not necessarily the case.
 }
 \examples{
- \dontrun{
- # Run this example in a working directory with write permissions
- myo <- system.file("extdata", "myotis.vcf", package = "diemr")
- vcf2diem(myo, "myo")
- rank2map("myo-includedSites.txt", windowSize = 50)
- } 
+\dontrun{
+# Run this example in a working directory with write permissions
+myo <- system.file("extdata", "myotis.vcf", package = "diemr")
+vcf2diem(myo, "myo")
+rank2map("myo-includedSites.txt", windowSize = 50)
+}
 }
 \seealso{
 \link{smoothPolarizedGenotypes}

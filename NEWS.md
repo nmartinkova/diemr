@@ -1,6 +1,7 @@
 # diemr 1.5.2
 
 - Integrated BED-format support into internal functions.
+- Fixed bug in `rank2map` when a chromosome had only one site.
 
 
 # diemr 1.5.1, released 09-10-2025

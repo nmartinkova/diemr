@@ -58,18 +58,20 @@ The scale parameter is equal to:
 \deqn{b = \frac{\text{windowSize}}{2 \ln(20)}.}
 }
 \examples{
- \dontrun{
- # Run this example in a working directory with write permissions
- myo <- system.file("extdata", "myotis.vcf", package = "diemr")
- vcf2diem(myo, "myo")
- fit <- diem("myo-001.txt", ChosenInds = 1:14)
- gen <- importPolarized("myo-001.txt", changePolarity = fit$markerPolarity, ChosenInds = 1:14)
- h <- hybridIndex(gen)
- gen2 <- smoothPolarizedGenotypes(genotypes = gen, 
-    includedSites = "myo-includedSites.txt", windowSize = 50)
- plotPolarized(gen, h)
- plotPolarized(gen2, h)
- }
+\dontrun{
+# Run this example in a working directory with write permissions
+myo <- system.file("extdata", "myotis.vcf", package = "diemr")
+vcf2diem(myo, "myo")
+fit <- diem("myo-001.txt", ChosenInds = 1:14)
+gen <- importPolarized("myo-001.txt", changePolarity = fit$markerPolarity, ChosenInds = 1:14)
+h <- hybridIndex(gen)
+gen2 <- smoothPolarizedGenotypes(
+  genotypes = gen,
+  includedSites = "myo-includedSites.txt", windowSize = 50
+)
+plotPolarized(gen, h)
+plotPolarized(gen2, h)
+}
 }
 \seealso{
 \link{rank2map}, \link{unbiasedWeightedStateChoice}
