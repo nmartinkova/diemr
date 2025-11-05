@@ -14,7 +14,7 @@ downloads](https://cranlogs.r-pkg.org/badges/last-month/diemr)](https://cran.r-p
 <!-- badges: end -->
 
 *diemr* implements the **Diagnostic Index Expectation Maximization
-(diem) algorithm** for **genome polarization** in `R`. It estimates
+(*diem*) algorithm** for **genome polarization** in `R`. It estimates
 which alleles of single nucleotide variant (SNV) sites belong to either
 side of a barrier to gene flow, co-estimates individual assignment, and
 infers barrier strength and divergence. These tools are designed for
@@ -24,6 +24,10 @@ polarisation for detecting barriers to geneflow. *Methods in Ecology and
 Evolution 14*, 512-528 <doi:10.1111/2041-210X.14010>. For the original
 algorithm description and implementations in `Python` and `Mathematica`,
 see the *diem* repository at <https://github.com/StuartJEBaird/diem>.
+For a step-by-step explanation of the functions and their outputs, see
+the  
+[`diemr`
+documentation](https://nmartinkova.github.io/genome-polarisation).
 
 ## Installation
 
@@ -36,6 +40,13 @@ if(!require("diemr", character.only = TRUE)){
     library("diemr", character.only = TRUE)
 }
 # Loading required package: diemr
+```
+
+The developer version can be installed directly from this repository
+using package `devtools`.
+
+``` r
+devtools::install_github("https://github.com/nmartinkova/diemr")
 ```
 
 Set working directory to a location with read and write privileges.
@@ -64,12 +75,14 @@ check prior to analysis is critical.
 diem.res <- diem(files = filepaths,
                  ploidy = list(rep(2, 6)), 
                  ChosenInds = 1:6,
-                 verbose = TRUE,
                  nCores = 1)
 ```
 
 The results including marker polarisation, marker diagnostic index and
 its support will be included in the list element `diem.res$DI`.
 Additional elements in the results list contain basic tracking
-information about the expectation maximisation iterations, with details
-provided in the folder *diagnostics* in the working directory.
+information about the expectation maximisation iterations. The key
+results are saved in a file *MarkerDiagnosticsWithOptimalPolarities.txt*
+in the working directory. Check the the [`diemr`
+documentation](https://nmartinkova.github.io/genome-polarisation) for
+further information.

@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 [![Monthly downloads](https://cranlogs.r-pkg.org/badges/last-month/diemr)](https://cran.r-project.org/package=diemr)
 <!-- badges: end -->
 
-_diemr_ implements the **Diagnostic Index Expectation Maximization (diem) algorithm**
+_diemr_ implements the **Diagnostic Index Expectation Maximization (*diem*) algorithm**
 for **genome polarization** in `R`. It estimates which alleles of single nucleotide
 variant (SNV) sites belong to
 either side of a barrier to gene flow, co-estimates individual assignment, 
@@ -30,7 +30,9 @@ of **hybridization**, **speciation**, and population divergence, and extend the
 methods described in Baird et al. (2023) Genome polarisation for detecting barriers to 
 geneflow. _Methods in Ecology and Evolution 14_, 512-528 <doi:10.1111/2041-210X.14010>. 
 For the original algorithm description and implementations in `Python` and 
-`Mathematica`, see the _diem_ repository at https://github.com/StuartJEBaird/diem.
+`Mathematica`, see the _diem_ repository at https://github.com/StuartJEBaird/diem. For a 
+step-by-step explanation of the functions and their outputs, see the  
+[`diemr` documentation](https://nmartinkova.github.io/genome-polarisation).
 
 ## Installation
 
@@ -43,6 +45,12 @@ if(!require("diemr", character.only = TRUE)){
 }
 # Loading required package: diemr
 ```
+
+The developer version can be installed directly from this repository using package `devtools`.
+```{r, eval = FALSE}
+devtools::install_github("https://github.com/nmartinkova/diemr")
+```
+
 
 Set working directory to a location with read and write privileges.
 
@@ -64,9 +72,8 @@ If the `CheckDiemFormat()` function fails, work through the error messages and f
 diem.res <- diem(files = filepaths,
 				 ploidy = list(rep(2, 6)), 
 				 ChosenInds = 1:6,
-                 verbose = TRUE,
                  nCores = 1)
 ```
 
-The results including marker polarisation, marker diagnostic index and its support will be included in the list element `diem.res$DI`. Additional elements in the results list contain basic tracking information about the expectation maximisation iterations, with details provided in the folder _diagnostics_ in the working directory. 
+The results including marker polarisation, marker diagnostic index and its support will be included in the list element `diem.res$DI`. Additional elements in the results list contain basic tracking information about the expectation maximisation iterations. The key results are saved in a file *MarkerDiagnosticsWithOptimalPolarities.txt* in the working directory. Check the the [`diemr` documentation](https://nmartinkova.github.io/genome-polarisation) for further information.
 
