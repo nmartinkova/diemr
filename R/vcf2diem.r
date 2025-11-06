@@ -11,6 +11,11 @@
 #' @param requireHomozygous A logical or numeric vector indicating whether to require the site
 #' to have at least one or more
 #'     homozygous individual(s) for each allele.
+#' @param maxMissing A numeric value specifying the maximum tolerated missing data 
+#'   per site. Values less than 1 are interpreted as a proportion (e.g., 0.25 allows up to 25% 
+#'   missing), and values greater than 1 are interpreted as the maximum number of individuals 
+#'   allowed to have missing genotypes. The default \code{0L} disables filtering by 
+#'   missing data, meaning that no sites are excluded based on error rate.
 #' @param bed Logical. If \code{TRUE}, export \code{includedSites} and \code{omittedSites} 
 #'     in 3-column BED format.
 #' @inheritParams diem
@@ -53,6 +58,7 @@
 #'    3. The second most frequent allele is found only in one heterozygous individual.
 #'    4. Dataset is invariant for the most frequent allele.
 #'    5. Dataset is invariant for the allele listed as the first ALT in the vcf input.
+#'    6. Site is not genotyped for a required number of individuals.
 #'
 #'    The CHROM, POS, and QUAL information for loci included in the converted files is
 #'    listed in the file ending with *includedSites.txt*. An additional column shows which
@@ -78,7 +84,7 @@
 #' vcf2diem(SNP = myofile, filename = "test1")
 #' vcf2diem(SNP = myofile, filename = "test2", chunk = 3)
 #' }
-vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, ChosenInds = "all", bed = FALSE) {
+vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, ChosenInds = "all", maxMissing = 0L, bed = FALSE) {
   if (!inherits(SNP, c("character", "vcfR"), which = FALSE)) {
     stop("'SNP' must be either a 'vcfR' object or a 'character' string with path to a vcf file.")
   }
@@ -101,9 +107,9 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     chunk <- chunk[1]
     warning("Different chunk sizes are not permitted. Using chunk size of ", chunk, " for all files.")
   }
+  # resolve minimum number of homozygots
   minHomozygous <- as.integer(requireHomozygous)
   requireHomozygous <- requireHomozygous > 0
-
 
 
   ######################################
@@ -225,6 +231,9 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     } else if (I4[, 4] == 0 && I4[, 3] == 0) { # invariant for the second most frequent allele
       nonInformative <- TRUE
       reason <- 5
+    } else if (maxMissing > 0 && I4[, 1] > maxMissing) { # exceeding maximum allowed missing genotypes
+      nonInformative <- TRUE
+      reason <- 6
     }
 
     if (any(nonInformative)) {
@@ -291,7 +300,7 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     cat("", file = includedSites, append = FALSE)
 
   } else {
-    cat("## Reasons for omitting loci:\n## 1 - Site has fewer than 2 alleles representing substitutions\n## 2 - Required homozygous individuals for the 2 most frequent alleles are not present\n## 3 - The second most frequent allele is found only in one heterozygous individual\n## 4 - Dataset is invariant for the most frequent allele\n## 5 - Dataset is invariant for the allele listed as the first ALT in the vcf input\nCHROM\tPOS\tQUAL\tREASON\n", file = omittedSites, append = FALSE)
+    cat("## Reasons for omitting loci:\n## 1 - Site has fewer than 2 alleles representing substitutions\n## 2 - Required homozygous individuals for the 2 most frequent alleles are not present\n## 3 - The second most frequent allele is found only in one heterozygous individual\n## 4 - Dataset is invariant for the most frequent allele\n## 5 - Dataset is invariant for the allele listed as the first ALT in the vcf input\n## 6 - Site is not genotyped for a required number of individuals\nCHROM\tPOS\tQUAL\tREASON\n", file = omittedSites, append = FALSE)
     cat("CHROM\tPOS\tQUAL\tallele0\tallele2\n", file = includedSites, append = FALSE)
   }
   cat("sampleNames\n", file = sampleNames, append = FALSE)
@@ -368,13 +377,19 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     }
 
 
-
     if (!(inherits(ChosenInds, "logical") || inherits(ChosenInds, "numeric") || inherits(ChosenInds, "integer")) ||
       any(ChosenInds > nInds) ||
       (inherits(ChosenInds, "logical") && length(ChosenInds) != nInds)) {
       warning("There are ", nInds, " individuals in the vcf file. Converting to diem for all.")
       ChosenInds <- rep(TRUE, nInds)
     }
+
+
+  # resolve filtering by error rate
+  if(maxMissing > 0){
+    maxMissing <- ifelse(maxMissing < 1, round(maxMissing * nInds, 0), maxMissing)
+  }
+
 
 
     # read and resolve genotypes

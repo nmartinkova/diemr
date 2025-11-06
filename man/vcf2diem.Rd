@@ -10,6 +10,7 @@ vcf2diem(
   chunk = 1L,
   requireHomozygous = TRUE,
   ChosenInds = "all",
+  maxMissing = 0L,
   bed = FALSE
 )
 }
@@ -28,6 +29,12 @@ homozygous individual(s) for each allele.}
 
 \item{ChosenInds}{A numeric or logical vector of indices of individuals to be included
 in the analysis.}
+
+\item{maxMissing}{A numeric value specifying the maximum tolerated missing data
+per site. Values less than 1 are interpreted as a proportion (e.g., 0.25 allows up to 25\%
+missing), and values greater than 1 are interpreted as the maximum number of individuals
+allowed to have missing genotypes. The default \code{0L} disables filtering by
+missing data, meaning that no sites are excluded based on error rate.}
 
 \item{bed}{Logical. If \code{TRUE}, export \code{includedSites} and \code{omittedSites}
 in 3-column BED format.}
@@ -80,6 +87,7 @@ not informative for genome polarisation using \code{diem} are:
 \item The second most frequent allele is found only in one heterozygous individual.
 \item Dataset is invariant for the most frequent allele.
 \item Dataset is invariant for the allele listed as the first ALT in the vcf input.
+\item Site is not genotyped for a required number of individuals.
 }
 
 The CHROM, POS, and QUAL information for loci included in the converted files is
