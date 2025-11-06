@@ -11,12 +11,12 @@
 #' @param requireHomozygous A logical or numeric vector indicating whether to require the site
 #' to have at least one or more
 #'     homozygous individual(s) for each allele.
-#' @param maxMissing A numeric value specifying the maximum tolerated missing data 
-#'   per site. Values less than 1 are interpreted as a proportion (e.g., 0.25 allows up to 25% 
-#'   missing), and values greater than 1 are interpreted as the maximum number of individuals 
-#'   allowed to have missing genotypes. The default \code{0L} disables filtering by 
+#' @param maxMissing A numeric value specifying the maximum tolerated missing data
+#'   per site. Values less than 1 are interpreted as a proportion (e.g., 0.25 allows up to 25%
+#'   missing), and values greater than 1 are interpreted as the maximum number of individuals
+#'   allowed to have missing genotypes. The default \code{0L} disables filtering by
 #'   missing data, meaning that no sites are excluded based on error rate.
-#' @param bed Logical. If \code{TRUE}, export \code{includedSites} and \code{omittedSites} 
+#' @param bed Logical. If \code{TRUE}, export \code{includedSites} and \code{omittedSites}
 #'     in 3-column BED format.
 #' @inheritParams diem
 #'
@@ -30,7 +30,7 @@
 #'    and class of the \code{SNP} object.
 #'
 #'    * When \code{chunk = 1L}, all included sites will be written into one file. Use this
-#'    option when you do not use parallelization or differentiate ploidy in some 
+#'    option when you do not use parallelization or differentiate ploidy in some
 #'    compartments.
 #'    * Other values of \code{chunk < 100} are interpreted as the number of files into which to
 #'    split data in \code{SNP}. For \code{SNP} object of class \code{vcfR}, the number
@@ -65,8 +65,8 @@
 #'    allele is encoded as 0 in its homozygous state and which is encoded as 2.
 #'
 #'    When \code{bed = TRUE}, both *includedSites.txt* and *omittedSites.txt* contain
-#'    simplified 0-based site coordinates in the standard 3-column BED format: chromosome, 
-#'    start (POS - 1), and end (POS). All other columns described above are omitted in 
+#'    simplified 0-based site coordinates in the standard 3-column BED format: chromosome,
+#'    start (POS - 1), and end (POS). All other columns described above are omitted in
 #'    this case.
 #' @return No value returned, called for side effects.
 #' @importFrom vcfR getFIX extract.gt
@@ -295,10 +295,9 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
   sampleNames <- outputs[[4]][3]
 
   # initialize loci placement files
-  if(bed){
+  if (bed) {
     cat("", file = omittedSites, append = FALSE)
     cat("", file = includedSites, append = FALSE)
-
   } else {
     cat("## Reasons for omitting loci:\n## 1 - Site has fewer than 2 alleles representing substitutions\n## 2 - Required homozygous individuals for the 2 most frequent alleles are not present\n## 3 - The second most frequent allele is found only in one heterozygous individual\n## 4 - Dataset is invariant for the most frequent allele\n## 5 - Dataset is invariant for the allele listed as the first ALT in the vcf input\n## 6 - Site is not genotyped for a required number of individuals\nCHROM\tPOS\tQUAL\tREASON\n", file = omittedSites, append = FALSE)
     cat("CHROM\tPOS\tQUAL\tallele0\tallele2\n", file = includedSites, append = FALSE)
@@ -385,10 +384,10 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     }
 
 
-  # resolve filtering by error rate
-  if(maxMissing > 0){
-    maxMissing <- ifelse(maxMissing < 1, round(maxMissing * nInds, 0), maxMissing)
-  }
+    # resolve filtering by error rate
+    if (maxMissing > 0) {
+      maxMissing <- ifelse(maxMissing < 1, round(maxMissing * length(ChosenInds), 0), maxMissing)
+    }
 
 
 
