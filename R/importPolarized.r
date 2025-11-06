@@ -3,7 +3,8 @@
 #' Reads genotypes from a file and changes marker polarity.
 #'
 #' @inheritParams diem
-#' @param changePolarity A logical vector with length equal to the number of markers.
+#' @param changePolarity A logical vector or a list of logical vectors with length equal
+#'   to the number of markers.
 #' @param verbose Logical whether to show messages on import progress.
 #' @param ... Optional numeric vector of \code{compartmentSizes}.
 #' @details For details on the input data format, check the \code{file} with
@@ -38,6 +39,15 @@ importPolarized <- function(files, changePolarity, ChosenInds, ChosenSites = "al
   if (verbose) message("ChosenSites for compartments done ", Sys.time())
 
   markerLabels <- which(unlist(ChosenSites))
+
+  # check changePolarity type
+  if (is.list(changePolarity)) {
+    if (!all(vapply(changePolarity, function(x) is.logical(x), logical(1L)))) {
+      stop("Argument 'changePolarity' must be a logical vector or a list of logical vectors.")
+    }
+  } else if (!is.logical(changePolarity)) {
+    stop("Argument 'changePolarity' must be a logical vector or a list of logical vectors.")
+  }
   changePolarity <- resolveCompartments(files = files, toBeCompartmentalized = changePolarity, ...)
   if (verbose) message("changePolarity for compartments done ", Sys.time())
 

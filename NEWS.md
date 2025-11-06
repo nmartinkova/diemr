@@ -4,6 +4,7 @@
 - Fixed bug in `rank2map` when a chromosome had only one site.
 - Added default value of 0.5 to `hybridIndex` when there are no data.
 - Modified `vcf2diem` to write all sites into one file when `chunk = 1L`, and allow minimum number of required genotyped individuals per site.
+- Added check for the `changePolarity` argument in `importPolarized`.
 - Updated README.
 
 

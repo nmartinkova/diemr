@@ -17,7 +17,8 @@ importPolarized(
 \arguments{
 \item{files}{A character vector with paths to files with genotypes.}
 
-\item{changePolarity}{A logical vector with length equal to the number of markers.}
+\item{changePolarity}{A logical vector or a list of logical vectors with length equal
+to the number of markers.}
 
 \item{ChosenInds}{A numeric or logical vector of indices of individuals to be included
 in the analysis.}
