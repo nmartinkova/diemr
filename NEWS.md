@@ -2,6 +2,9 @@
 
 - Integrated BED-format support into internal functions.
 - Fixed bug in `rank2map` when a chromosome had only one site.
+- Added default value of 0.5 to `hybridIndex` when there are no data.
+- Modified `vcf2diem` to write all sites into one file when `chunk = 1L`.
+- Updated README.
 
 
 # diemr 1.5.1, released 09-10-2025

@@ -20,7 +20,7 @@ variantSites(
 \item{ChosenInds}{A numeric or logical vector of indices of individuals to be included
 in the analysis.}
 
-\item{requireHomozygous}{A logical or numeric vector indicating whether to require the marker
+\item{requireHomozygous}{A logical or numeric vector indicating whether to require the site
 to have at least one or more
 homozygous individual(s) for each allele.}
 

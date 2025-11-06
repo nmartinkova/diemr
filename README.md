@@ -26,8 +26,8 @@ algorithm description and implementations in `Python` and `Mathematica`,
 see the *diem* repository at <https://github.com/StuartJEBaird/diem>.
 For a step-by-step explanation of the functions and their outputs, see
 the  
-[`diemr`
-documentation](https://nmartinkova.github.io/genome-polarisation).
+[documentation](https://nmartinkova.github.io/genome-polarisation) for
+the `diemr` package.
 
 ## Installation
 
@@ -51,7 +51,7 @@ devtools::install_github("https://github.com/nmartinkova/diemr")
 
 Set working directory to a location with read and write privileges.
 
-## Check data format
+## Check data format and polarise genotypes
 
 Next, assemble paths to all files containing the data to be used by
 *diemr*. Here, we will use a tiny example dataset for illustration that

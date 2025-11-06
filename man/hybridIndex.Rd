@@ -45,6 +45,8 @@ processed by \code{pHetErrOnStateCount(sStateCount(row))}.
 
 If \code{rescale = TRUE}, values are mapped to \deqn{[0, 1]} unless all are equal
 or non-finite, in which case the original values are returned with a warning.
+
+If a sample has no data, the default hybrid index is 0.5.
 }
 \examples{
 hybridIndex(c(0.3, 0.5, 0.7))

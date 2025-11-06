@@ -27,6 +27,8 @@
 #'
 #' If `rescale = TRUE`, values are mapped to \deqn{[0, 1]} unless all are equal
 #' or non-finite, in which case the original values are returned with a warning.
+#' 
+#' If a sample has no data, the default hybrid index is 0.5.
 #'
 #' @return
 #' A numeric vector of hybrid index values. Names are not preserved.
@@ -82,5 +84,6 @@ hybridIndex <- function(x, ChosenInds = "all", rescale = FALSE) {
       warning("Rescale requested but all values equal or non-finite; returning unscaled hybrid indices.")
     }
   }
+  HI[is.na(HI)] <- 0.5
   return(HI)
 }

@@ -19,10 +19,10 @@ object. Diploid data are currently supported.}
 
 \item{filename}{A character vector with a path where to save the converted genotypes.}
 
-\item{chunk}{Numeric indicating by how many markers should the result be split into
+\item{chunk}{Numeric indicating by how many sites should the result be split into
 separate files.}
 
-\item{requireHomozygous}{A logical or numeric vector indicating whether to require the marker
+\item{requireHomozygous}{A logical or numeric vector indicating whether to require the site
 to have at least one or more
 homozygous individual(s) for each allele.}
 
@@ -49,13 +49,16 @@ very large and complex genomic datasets.
 The number of files \code{vcf2diem} creates depends on the \code{chunk} argument
 and class of the \code{SNP} object.
 \itemize{
-\item Values of \code{chunk < 100} are interpreted as the number of files into which to
+\item When \code{chunk = 1L}, all included sites will be written into one file. Use this
+option when you do not use parallelization or differentiate ploidy in some
+compartments.
+\item Other values of \code{chunk < 100} are interpreted as the number of files into which to
 split data in \code{SNP}. For \code{SNP} object of class \code{vcfR}, the number
-of markers per file is calculated from the dimensions of \code{SNP}. When class
-of \code{SNP} is \code{character}, the number of markers per file is approximated
-from a model with a message. If this number of markers per file is inappropriate
+of sites per file is calculated from the dimensions of \code{SNP}. When class
+of \code{SNP} is \code{character}, the number of sites per file is approximated
+from a model with a message. If this number of sites per file is inappropriate
 for the expected
-output, provide the intended number of markers per file in \code{chunk} greater
+output, provide the intended number of sites per file in \code{chunk} greater
 than 100 (values greater than 10000 are recommended for genomic data).
 \code{vcf2diem} will scan the whole input specified in the \code{SNP} file, creating
 additional output files until the last line in \code{SNP} is reached.
@@ -63,15 +66,15 @@ additional output files until the last line in \code{SNP} is reached.
 in diem format will contain \code{chunk} number of lines with the data in \code{SNP}.
 }
 
-When the vcf file contains markers not informative for genome polarisation,
+When the vcf file contains sites not informative for genome polarisation,
 those are removed and listed in a file ending with \emph{omittedSites.txt} in the
 directory specified in the \code{filename} argument or in the working directory.
 The omitted loci are identified by their values in the CHROM and POS columns,
 and include the QUAL column data. The last column is an integer specifying
-the reason why the respective marker was omitted. The reasons markers are
+the reason why the respective site was omitted. The reasons sites are
 not informative for genome polarisation using \code{diem} are:
 \enumerate{
-\item Marker has fewer than 2 alleles representing substitutions.
+\item Site has fewer than 2 alleles representing substitutions.
 \item Required homozygous individuals for the two most frequent alleles are not present
 (optional, controlled by the \code{requireHomozygous} argument).
 \item The second most frequent allele is found only in one heterozygous individual.

@@ -32,7 +32,7 @@ geneflow. _Methods in Ecology and Evolution 14_, 512-528 <doi:10.1111/2041-210X.
 For the original algorithm description and implementations in `Python` and 
 `Mathematica`, see the _diem_ repository at https://github.com/StuartJEBaird/diem. For a 
 step-by-step explanation of the functions and their outputs, see the  
-[`diemr` documentation](https://nmartinkova.github.io/genome-polarisation).
+[documentation](https://nmartinkova.github.io/genome-polarisation) for the `diemr` package.
 
 ## Installation
 
@@ -54,7 +54,7 @@ devtools::install_github("https://github.com/nmartinkova/diemr")
 
 Set working directory to a location with read and write privileges.
 
-## Check data format
+## Check data format and polarise genotypes
 
 Next, assemble paths to all files containing the data to be used by _diemr_. Here, we will use a tiny example dataset for illustration that is included in the package. A good practice is to check that all files contain data in correct format for all individuals and markers.
 

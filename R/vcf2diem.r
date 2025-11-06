@@ -6,9 +6,9 @@
 #' @param SNP A character vector with a path to the '.vcf' or '.vcf.gz' file, or an \code{vcfR}
 #'     object. Diploid data are currently supported.
 #' @param filename A character vector with a path where to save the converted genotypes.
-#' @param chunk Numeric indicating by how many markers should the result be split into
+#' @param chunk Numeric indicating by how many sites should the result be split into
 #'     separate files.
-#' @param requireHomozygous A logical or numeric vector indicating whether to require the marker
+#' @param requireHomozygous A logical or numeric vector indicating whether to require the site
 #' to have at least one or more
 #'     homozygous individual(s) for each allele.
 #' @param bed Logical. If \code{TRUE}, export \code{includedSites} and \code{omittedSites} 
@@ -24,27 +24,30 @@
 #'    The number of files \code{vcf2diem} creates depends on the \code{chunk} argument
 #'    and class of the \code{SNP} object.
 #'
-#'    * Values of \code{chunk < 100} are interpreted as the number of files into which to
+#'    * When \code{chunk = 1L}, all included sites will be written into one file. Use this
+#'    option when you do not use parallelization or differentiate ploidy in some 
+#'    compartments.
+#'    * Other values of \code{chunk < 100} are interpreted as the number of files into which to
 #'    split data in \code{SNP}. For \code{SNP} object of class \code{vcfR}, the number
-#'    of markers per file is calculated from the dimensions of \code{SNP}. When class
-#'    of \code{SNP} is \code{character}, the number of markers per file is approximated
-#'    from a model with a message. If this number of markers per file is inappropriate
+#'    of sites per file is calculated from the dimensions of \code{SNP}. When class
+#'    of \code{SNP} is \code{character}, the number of sites per file is approximated
+#'    from a model with a message. If this number of sites per file is inappropriate
 #'    for the expected
-#'    output, provide the intended number of markers per file in \code{chunk} greater
+#'    output, provide the intended number of sites per file in \code{chunk} greater
 #'    than 100 (values greater than 10000 are recommended for genomic data).
 #'    \code{vcf2diem} will scan the whole input specified in the \code{SNP} file, creating
 #'    additional output files until the last line in \code{SNP} is reached.
 #'    * Values of \code{chunk >= 100} mean that each output file
 #'    in diem format will contain \code{chunk} number of lines with the data in \code{SNP}.
 #'
-#'    When the vcf file contains markers not informative for genome polarisation,
+#'    When the vcf file contains sites not informative for genome polarisation,
 #'    those are removed and listed in a file ending with *omittedSites.txt* in the
 #'    directory specified in the \code{filename} argument or in the working directory.
 #'    The omitted loci are identified by their values in the CHROM and POS columns,
 #'    and include the QUAL column data. The last column is an integer specifying
-#'    the reason why the respective marker was omitted. The reasons markers are
+#'    the reason why the respective site was omitted. The reasons sites are
 #'    not informative for genome polarisation using \code{diem} are:
-#'    1. Marker has fewer than 2 alleles representing substitutions.
+#'    1. Site has fewer than 2 alleles representing substitutions.
 #'    2. Required homozygous individuals for the two most frequent alleles are not present
 #'       (optional, controlled by the \code{requireHomozygous} argument).
 #'    3. The second most frequent allele is found only in one heterozygous individual.
@@ -131,7 +134,7 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
       paste0(filepath, "-sampleNames.txt")
     )
     # estimate chunk size
-    if (chunk < 100) {
+    if (chunk < 100 && chunk != 1L) {
       if (any(class(SNP) == "vcfR")) {
         filename <- paste0(
           filename, "-",
@@ -142,13 +145,13 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
         chunk <- unname(ceiling(nrow(SNP@fix) / chunk))
       } else {
         filesize <- file.size(SNP)[1]
-        # model prediction on possible number of markers per chunk
+        # model prediction on possible number of sites per chunk
         chunk <- ceiling(10^(-1.2387 + 0.7207 * log10(filesize)) / chunk)
-        message("Expecting to include ", chunk, " markers per diem file.\nIf you expect more markers in the file, provide a suitable chunk size.")
+        message("Expecting to include ", chunk, " sites per diem file.\nIf you expect more sites in the file, provide a suitable chunk size.")
       }
     }
     if (chunk >= 100) {
-      message("Will include up to ", chunk, " markers per diem file.")
+      message("Will include up to ", chunk, " sites per diem file.")
     }
     return(list(filename, chunk, origChunk, lociFiles))
   }
@@ -170,13 +173,13 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
         which(nchar(x) == 1) - 1
       } # allele numbers, not indices; removes allele numbers for indels
     )
-    resolvable[lengths(resolvable) <= 1] <- NA # sets markers as not resolvable if less than 2 substitutions remain
+    resolvable[lengths(resolvable) <= 1] <- NA # sets sites as not resolvable if less than 2 substitutions remain
     reason <- 1
 
-    # remove markers with unresolvable indels
+    # remove sites with unresolvable indels
     SNP[indels <- sapply(resolvable, FUN = anyNA, simplify = TRUE), ] <- NA
 
-    # resolve multiallelic markers
+    # resolve multiallelic sites
     multiallelic <- which(grepl(",", ALLELES) & !indels)
     if (length(multiallelic) > 0) {
       for (i in multiallelic) {
@@ -207,7 +210,7 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
       SNP <- sub(patterns[i], replacements[i], SNP, perl = TRUE)
     }
 
-    # identify non-informative markers
+    # identify non-informative sites
     I4 <- t(apply(SNP, MARGIN = 1, FUN = sStateCount))
     nonInformative <- FALSE
     if (requireHomozygous && (I4[, 2] < minHomozygous || I4[, 4] < minHomozygous)) { # homozygous individuals missing
@@ -288,7 +291,7 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     cat("", file = includedSites, append = FALSE)
 
   } else {
-    cat("## Reasons for omitting loci:\n## 1 - Marker has fewer than 2 alleles representing substitutions\n## 2 - Required homozygous individuals for the 2 most frequent alleles are not present\n## 3 - The second most frequent allele is found only in one heterozygous individual\n## 4 - Dataset is invariant for the most frequent allele\n## 5 - Dataset is invariant for the allele listed as the first ALT in the vcf input\nCHROM\tPOS\tQUAL\tREASON\n", file = omittedSites, append = FALSE)
+    cat("## Reasons for omitting loci:\n## 1 - Site has fewer than 2 alleles representing substitutions\n## 2 - Required homozygous individuals for the 2 most frequent alleles are not present\n## 3 - The second most frequent allele is found only in one heterozygous individual\n## 4 - Dataset is invariant for the most frequent allele\n## 5 - Dataset is invariant for the allele listed as the first ALT in the vcf input\nCHROM\tPOS\tQUAL\tREASON\n", file = omittedSites, append = FALSE)
     cat("CHROM\tPOS\tQUAL\tallele0\tallele2\n", file = includedSites, append = FALSE)
   }
   cat("sampleNames\n", file = sampleNames, append = FALSE)
