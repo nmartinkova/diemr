@@ -3,7 +3,7 @@
 - Integrated BED-format support into internal functions.
 - Fixed bug in `rank2map` when a chromosome had only one site.
 - Added default value of 0.5 to `hybridIndex` when there are no data.
-- Modified `vcf2diem` to write all sites into one file when `chunk = 1L`, and allow minimum number of required genotyped individuals per site.
+- Modified `vcf2diem` to write all sites into one file when `chunk = 1L`, allow minimum number of required genotyped individuals per site, and subset *sampleNames.txt* to `ChosenInds` only.
 - Added check for the `changePolarity` argument in `importPolarized`.
 - Updated README.
 

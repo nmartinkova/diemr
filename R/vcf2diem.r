@@ -68,6 +68,9 @@
 #'    simplified 0-based site coordinates in the standard 3-column BED format: chromosome,
 #'    start (POS - 1), and end (POS). All other columns described above are omitted in
 #'    this case.
+#'
+#' The file sampleNames.txt will contain the individual names listed from column 10 onward
+#' in the VCF header, restricted to those specified by the \code{ChosenInds} argument.
 #' @return No value returned, called for side effects.
 #' @importFrom vcfR getFIX extract.gt
 #' @importFrom tools file_ext file_path_sans_ext
@@ -365,23 +368,25 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
       Marker <- readLines(infile, n = 1)
     }
 
-    # write sample names
+	# header
     previousMarker <- unlist(strsplit(previousMarker, split = "\t"))
-    cat(previousMarker[10:length(previousMarker)], file = sampleNames, sep = "\n", append = TRUE)
-
+    
+    
     # check ChosenInds
     nInds <- length(previousMarker) - 9
     if (ChosenInds[1] == "all") {
       ChosenInds <- rep(TRUE, nInds)
     }
-
-
+    
     if (!(inherits(ChosenInds, "logical") || inherits(ChosenInds, "numeric") || inherits(ChosenInds, "integer")) ||
       any(ChosenInds > nInds) ||
       (inherits(ChosenInds, "logical") && length(ChosenInds) != nInds)) {
       warning("There are ", nInds, " individuals in the vcf file. Converting to diem for all.")
       ChosenInds <- rep(TRUE, nInds)
     }
+    
+    # write sample names
+    cat(previousMarker[10:length(previousMarker)][ChosenInds], file = sampleNames, sep = "\n", append = TRUE)
 
 
     # resolve filtering by error rate

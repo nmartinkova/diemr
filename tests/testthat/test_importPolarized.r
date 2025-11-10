@@ -18,8 +18,8 @@ test_that("error on arguments in importPolarized", {
     ),
     regexp = "contains fewer individuals"
   )
-  
-    expect_error(
+
+  expect_error(
     object = importPolarized(
       files = system.file("extdata", "data7x3.txt", package = "diemr"),
       changePolarity = c(0, 1, 0),
@@ -38,7 +38,6 @@ test_that("error on arguments in importPolarized", {
     ),
     regexp = "must be a logical vector or a list of logical vectors"
   )
-
 })
 
 

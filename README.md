@@ -26,7 +26,7 @@ algorithm description and implementations in `Python` and `Mathematica`,
 see the *diem* repository at <https://github.com/StuartJEBaird/diem>.
 For a step-by-step explanation of the functions and their outputs, see
 the  
-[documentation](https://nmartinkova.github.io/genome-polarisation) for
+[documentation](https://nmartinkova.github.io/genome-polarisation/) for
 the `diemr` package.
 
 ## Installation
@@ -83,6 +83,6 @@ its support will be included in the list element `diem.res$DI`.
 Additional elements in the results list contain basic tracking
 information about the expectation maximisation iterations. The key
 results are saved in a file *MarkerDiagnosticsWithOptimalPolarities.txt*
-in the working directory. Check the the [`diemr`
-documentation](https://nmartinkova.github.io/genome-polarisation) for
+in the working directory. Check the the `diemr`
+[documentation](https://nmartinkova.github.io/genome-polarisation/) for
 further information.

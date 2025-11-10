@@ -98,6 +98,9 @@ When \code{bed = TRUE}, both \emph{includedSites.txt} and \emph{omittedSites.txt
 simplified 0-based site coordinates in the standard 3-column BED format: chromosome,
 start (POS - 1), and end (POS). All other columns described above are omitted in
 this case.
+
+The file sampleNames.txt will contain the individual names listed from column 10 onward
+in the VCF header, restricted to those specified by the \code{ChosenInds} argument.
 }
 \examples{
 \dontrun{

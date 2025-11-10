@@ -32,7 +32,7 @@ geneflow. _Methods in Ecology and Evolution 14_, 512-528 <doi:10.1111/2041-210X.
 For the original algorithm description and implementations in `Python` and 
 `Mathematica`, see the _diem_ repository at https://github.com/StuartJEBaird/diem. For a 
 step-by-step explanation of the functions and their outputs, see the  
-[documentation](https://nmartinkova.github.io/genome-polarisation) for the `diemr` package.
+[documentation](https://nmartinkova.github.io/genome-polarisation/) for the `diemr` package.
 
 ## Installation
 
@@ -75,5 +75,5 @@ diem.res <- diem(files = filepaths,
                  nCores = 1)
 ```
 
-The results including marker polarisation, marker diagnostic index and its support will be included in the list element `diem.res$DI`. Additional elements in the results list contain basic tracking information about the expectation maximisation iterations. The key results are saved in a file *MarkerDiagnosticsWithOptimalPolarities.txt* in the working directory. Check the the [`diemr` documentation](https://nmartinkova.github.io/genome-polarisation) for further information.
+The results including marker polarisation, marker diagnostic index and its support will be included in the list element `diem.res$DI`. Additional elements in the results list contain basic tracking information about the expectation maximisation iterations. The key results are saved in a file *MarkerDiagnosticsWithOptimalPolarities.txt* in the working directory. Check the the `diemr` [documentation](https://nmartinkova.github.io/genome-polarisation/) for further information.
 
