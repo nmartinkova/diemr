@@ -85,9 +85,7 @@ resolveCompartments <- function(files, toBeCompartmentalized, compartmentSizes =
 #'
 #' @return An integer vector of indices corresponding to individuals in the file.
 #' @keywords internal
-#'
-#' @examples
-#' resolveChosenInds(system.file("extdata", "data7x3.txt", package = "diemr"))
+
 resolveChosenInds <- function(file) {
   if (!file.exists(file)) stop("File not found: ", file)
   x <- readLines(file, n = 1L, warn = FALSE)

@@ -18,7 +18,4 @@ diem-formatted genotype file and returns the corresponding index vector.
 The first line contains one character per individual plus an initial label,
 so the valid indices are \code{1:(nchar(line) - 1)}.
 }
-\examples{
-resolveChosenInds(system.file("extdata", "data7x3.txt", package = "diemr"))
-}
 \keyword{internal}

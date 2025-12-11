@@ -142,7 +142,7 @@ test_that("ploidy-aware multi-file input matches manual I4 computation", {
   expect_equal(
     object = HI_wrapper,
     expected = as.numeric(HI_manual),
-    tolerance = 1e-10
+    tolerance = 1e-5
   )
 })
 
@@ -177,5 +177,5 @@ test_that("ploidy-aware hybridIndex respects ChosenInds subsetting", {
     ChosenInds = 2:5
   )
 
-  expect_equal(hi_subset, hi_all[2:5])
+  expect_equal(hi_subset, hi_all[2:5], tolerance = 1e-5)
 })

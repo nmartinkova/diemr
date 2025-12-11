@@ -127,7 +127,7 @@ hybridIndex <- function(x, ChosenInds = "all", rescale = FALSE, ploidy = NULL, C
     }
   }
   # subset ChosenInds
-  if (length(ChosenInds) > 0L && ChosenInds[1] != "all" && !is.null(ploidy)) {
+  if (length(ChosenInds) > 0L && ChosenInds[1] != "all" && is.null(ploidy)) {
     if (any(ChosenInds < 1L | ChosenInds > length(HI))) {
       stop("ChosenInds out of bounds for length ", length(HI), ".")
     }
