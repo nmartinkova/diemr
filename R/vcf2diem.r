@@ -368,23 +368,23 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
       Marker <- readLines(infile, n = 1)
     }
 
-	# header
+    # header
     previousMarker <- unlist(strsplit(previousMarker, split = "\t"))
-    
-    
+
+
     # check ChosenInds
     nInds <- length(previousMarker) - 9
     if (ChosenInds[1] == "all") {
       ChosenInds <- rep(TRUE, nInds)
     }
-    
+
     if (!(inherits(ChosenInds, "logical") || inherits(ChosenInds, "numeric") || inherits(ChosenInds, "integer")) ||
       any(ChosenInds > nInds) ||
       (inherits(ChosenInds, "logical") && length(ChosenInds) != nInds)) {
       warning("There are ", nInds, " individuals in the vcf file. Converting to diem for all.")
       ChosenInds <- rep(TRUE, nInds)
     }
-    
+
     # write sample names
     cat(previousMarker[10:length(previousMarker)][ChosenInds], file = sampleNames, sep = "\n", append = TRUE)
 

@@ -4,7 +4,7 @@
 \alias{CheckDiemFormat}
 \title{diem input file checker}
 \usage{
-CheckDiemFormat(files, ChosenInds, ploidy)
+CheckDiemFormat(files, ChosenInds, ploidy, quiet = FALSE)
 }
 \arguments{
 \item{files}{A character vector with paths to files with genotypes.}
@@ -16,6 +16,8 @@ in the analysis.}
 element of the list
 contains a numeric vector with ploidy numbers for all individuals specified in
 the \code{files}.}
+
+\item{quiet}{Logical. If \code{TRUE}, the function prints out a message when the checks pass.}
 }
 \value{
 Returns invisible \code{TRUE} if all files are executable by \code{diem}. Exits

@@ -118,3 +118,46 @@ test_that("markerAxis", {
     regexp = "Provide both 'includedSites' and 'ChosenSites'."
   )
 })
+
+
+test_that("resolveChosenInds", {
+  file1 <- system.file("extdata", "data7x3.txt", package = "diemr")
+
+  inds <- diemr:::resolveChosenInds(file1)
+
+  expect_equal(inds, 1:7)
+  expect_type(inds, "integer")
+  expect_length(inds, 7)
+})
+
+
+test_that("sImport reads all individuals from file", {
+  file1 <- system.file("extdata", "data7x3.txt", package = "diemr")
+
+  expect_equal(
+    object = sImport(file = file1, ChosenInds = 1:7),
+    expected = matrix(
+      c(
+        "0", "0", "1", "1", "2", "2", "2", # m1
+        "1", "2", "1", "0", "0", "0", "1", # m2
+        "0", "2", "2", "2", "1", "_", "0" # m3
+      ),
+      ncol = 3
+    ),
+    ignore_attr = TRUE
+  )
+
+
+  expect_equal(
+    object = sImport(file = file1, ChosenInds = c(1, 3, 7)),
+    expected = matrix(
+      c(
+        "0", "1", "2", # m1, rows 1,3,7
+        "1", "1", "1", # m2
+        "0", "2", "0" # m3
+      ),
+      ncol = 3
+    ),
+    ignore_attr = TRUE
+  )
+})

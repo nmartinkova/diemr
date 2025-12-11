@@ -74,3 +74,108 @@ test_that("correct solution of hybridIndex", {
     regexp = "values equal"
   )
 })
+
+
+test_that("ploidy-aware hybridIndex errors on ploidy length mismatch", {
+  filepaths <- c(
+    system.file("extdata", "data7x3.txt", package = "diemr"),
+    system.file("extdata", "data7x10.txt", package = "diemr")
+  )
+
+  wrong_ploidies <- list(rep(2, 6), rep(2, 7))
+
+  expect_error(
+    hybridIndex(
+      x = filepaths,
+      ploidy = wrong_ploidies,
+      changePolarity = rep(TRUE, 13)
+    ),
+    regexp = "Ploidy"
+  )
+})
+
+test_that("ploidy-aware multi-file input matches manual I4 computation", {
+  filepaths <- c(
+    system.file("extdata", "data7x3.txt", package = "diemr"),
+    system.file("extdata", "data7x10.txt", package = "diemr")
+  )
+
+  ploidies <- list(
+    rep(2, 7),
+    c(2, 1, 2, 2, 2, 1, 2)
+  )
+
+  changePolarity <- c(
+    FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    FALSE, TRUE, TRUE, FALSE, TRUE, TRUE
+  )
+
+  # manual construction of A4 (mirrors hybridIndex internals)
+  CheckDiemFormat(files = filepaths, ploidy = ploidies, ChosenInds = "all")
+
+  gen_list <- importPolarized(
+    files = filepaths,
+    changePolarity = changePolarity,
+    ChosenInds = "all",
+    ChosenSites = "all",
+    simplify = FALSE
+  )
+
+  keepCompartments <- !vapply(gen_list, anyNA, logical(1L))
+  gen_list <- gen_list[keepCompartments]
+  ploidies <- ploidies[keepCompartments]
+
+  I4_list <- lapply(gen_list, function(x) t(apply(x, 1L, sStateCount)))
+  A4compartments_manual <- Map("*", I4_list, ploidies)
+  A4_manual <- Reduce("+", A4compartments_manual)
+
+  HI_manual <- apply(A4_manual, 1L, function(row) {
+    pHetErrOnStateCount(row)[1L]
+  })
+
+  HI_wrapper <- hybridIndex(
+    x = filepaths,
+    ploidy = ploidies,
+    changePolarity = changePolarity
+  )
+
+  expect_equal(
+    object = HI_wrapper,
+    expected = as.numeric(HI_manual),
+    tolerance = 1e-10
+  )
+})
+
+
+test_that("ploidy-aware hybridIndex respects ChosenInds subsetting", {
+  filepaths <- c(
+    system.file("extdata", "data7x3.txt", package = "diemr"),
+    system.file("extdata", "data7x10.txt", package = "diemr")
+  )
+
+  ploidies <- list(
+    rep(2, 7),
+    c(2, 1, 2, 2, 2, 1, 2)
+  )
+
+  changePolarity <- c(
+    FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+    FALSE, TRUE, TRUE, FALSE, TRUE, TRUE
+  )
+
+  hi_all <- hybridIndex(
+    x = filepaths,
+    ploidy = ploidies,
+    changePolarity = changePolarity,
+    ChosenInds = "all"
+  )
+
+  hi_subset <- hybridIndex(
+    x = filepaths,
+    ploidy = ploidies,
+    changePolarity = changePolarity,
+    ChosenInds = 2:5
+  )
+
+  expect_equal(hi_subset, hi_all[2:5])
+})

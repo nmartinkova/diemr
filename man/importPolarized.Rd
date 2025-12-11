@@ -11,6 +11,7 @@ importPolarized(
   ChosenSites = "all",
   nCores = 1,
   verbose = FALSE,
+  simplify = TRUE,
   ...
 )
 }
@@ -31,11 +32,14 @@ analysis.}
 
 \item{verbose}{Logical whether to show messages on import progress.}
 
+\item{simplify}{Logical. If \code{TRUE}, the function returns a matrix.}
+
 \item{...}{Optional numeric vector of \code{compartmentSizes}.}
 }
 \value{
 Returns a character matrix with rows containing individual genotypes and columns
-containing markers.
+containing markers. If \code{simplify = FALSE}, returns a list of matrices corresponding to
+compartments in files.
 }
 \description{
 Reads genotypes from a file and changes marker polarity.
@@ -54,7 +58,8 @@ dat <- importPolarized(
   files <- system.file("extdata", "data7x3.txt", package = "diemr"),
   changePolarity = c(FALSE, TRUE, TRUE),
   ChosenInds = 1:6,
-  ChosenSites = "all"
+  ChosenSites = "all",
+  simplify = TRUE
 )
 dat
 #    m1  m2  m3

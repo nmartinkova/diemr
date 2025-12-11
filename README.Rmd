@@ -31,8 +31,7 @@ methods described in Baird et al. (2023) Genome polarisation for detecting barri
 geneflow. _Methods in Ecology and Evolution 14_, 512-528 <doi:10.1111/2041-210X.14010>. 
 For the original algorithm description and implementations in `Python` and 
 `Mathematica`, see the _diem_ repository at https://github.com/StuartJEBaird/diem. For a 
-step-by-step explanation of the functions and their outputs, see the  
-[documentation](https://nmartinkova.github.io/genome-polarisation/) for the `diemr` package.
+step-by-step explanation of the functions and their outputs, see the [documentation](https://nmartinkova.github.io/genome-polarisation/) for the `diemr` package.
 
 ## Installation
 

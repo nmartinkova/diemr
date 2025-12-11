@@ -87,6 +87,20 @@ test_that("correct solution of importPolarized", {
     ), ncol = 3),
     ignore_attr = TRUE
   )
+
+
+  expect_equal(
+    object = importPolarized(system.file("extdata", "data7x3.txt", package = "diemr"),
+      changePolarity = rep(TRUE, 3),
+      ChosenInds = 1:3,
+      simplify = FALSE
+    ),
+    expected = list(matrix(c(
+      "2", "1", "2",
+      "2", "0", "0",
+      "1", "1", "0"
+    ), ncol = 3, byrow = TRUE))
+  )
 })
 
 

@@ -20,9 +20,9 @@ Imports a BED-like file and optionally subsets sites.
 \examples{
 \dontrun{
 # Run this example in a working directory with write permissions
-  myo <- system.file("extdata", "myotis.vcf", package = "diemr")
-  vcf2diem(myo, "myo")
-  readIncludedSites("myo-001.txt")
-  readIncludedSites("myo-001.txt", ChosenSites = 2:7)
+myo <- system.file("extdata", "myotis.vcf", package = "diemr")
+vcf2diem(myo, "myo")
+readIncludedSites("myo-001.txt")
+readIncludedSites("myo-001.txt", ChosenSites = 2:7)
 }
 }

@@ -3,6 +3,7 @@
 #' Checks format of files with genotype data.
 #'
 #' @inheritParams diem
+#' @param quiet Logical. If `TRUE`, the function prints out a message when the checks pass.
 #' @export
 #' @details The input file must have genotypes of one marker for all individuals on one
 #'  line. The line must start with a letter "S" and contain only characters
@@ -27,7 +28,7 @@
 #' CheckDiemFormat(files = inputFile, ploidy = ploidies, ChosenInds = inds)
 #' #  File check passed: TRUE
 #' #  Ploidy check passed: TRUE
-CheckDiemFormat <- function(files, ChosenInds, ploidy) {
+CheckDiemFormat <- function(files, ChosenInds, ploidy, quiet = FALSE) {
   ##########################################
   # Checks format in one compartment file
   ##########################################
@@ -60,7 +61,7 @@ CheckDiemFormat <- function(files, ChosenInds, ploidy) {
             stop("Markers on lines ", paste(head(which(wrongNind)), collapse = ", "), " in file ", file, " were genotyped for a different number of individuals. Make sure the line lengths are the same.")
           } else {
             # maximum index of ChosenInds
-            if (max(nIndividuals) < max(ChosenInds)) {
+            if (is.numeric(ChosenInds) && max(nIndividuals) < max(ChosenInds)) {
               stop("File ", file, " contains fewer individuals than the maximum index specified in ChosenInds.")
             } else {
               # _012 symbols
@@ -83,7 +84,9 @@ CheckDiemFormat <- function(files, ChosenInds, ploidy) {
     res <- compartmentCheck(file = x, ChosenInds = ChosenInds)
   }
 
-  message("File check passed: ", all(unlist(res)))
+  if (!quiet) {
+    message("File check passed: ", all(unlist(res)))
+  }
 
   res <- FALSE
   nIndividuals <- nchar(readLines(files[1])[1]) - 1
@@ -113,8 +116,9 @@ CheckDiemFormat <- function(files, ChosenInds, ploidy) {
     } # Ploidy is a list
   } # ploidy = FALSE
 
-  message("Ploidy check passed: ", res)
-
+  if (!quiet) {
+    message("Ploidy check passed: ", res)
+  }
 
   invisible(res)
 }
