@@ -84,7 +84,8 @@ Additional graphical parameters are passed to internal calls to \code{image()},
 \code{yaxs}, \code{xlab}, \code{ylab}, \code{breaks}, \code{useRaster}, \code{asp},
 \code{cex}, \code{cex.lab}, \code{cex.main}, \code{cex.sub}, \code{axes},
 \code{col.axis}, \code{cex.axis}, \code{family}, \code{font}, \code{font.axis},
-\code{font.lab}, \code{font.main}, \code{font.sub}, \code{lab}, \code{xpd}.
+\code{font.lab}, \code{font.main}, \code{font.sub}, \code{lab}, \code{xpd}, \code{main},
+\code{sub}.
 
 \strong{Axis arguments:} \code{side}, \code{at}, \code{col.ticks}, \code{labels},
 \code{las}, \code{tick}, \code{line}, \code{pos}, \code{outer}, \code{font},

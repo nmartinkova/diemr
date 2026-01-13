@@ -69,10 +69,12 @@ Each row is converted to state counts via \code{sStateCount()} and then passed t
 \item \strong{Ploidy-aware multi-file input} - if \code{x} is a character vector of files
 and \code{ploidy} and \code{changePolarity} are supplied, ploidy-aware hybrid indices
 are calculated for an optional subset of individuals (\code{ChosenInds}) and
-sites (\code{ChosenSites}).
+sites (\code{ChosenSites}). Note that if the filename in \code{x} is not supplied together
+with \code{ploidy} and \code{changePolarity} arguments, the function assumes the file contains
+hybrid indices such as those saved by \code{diem()} to \emph{HIwithOptimalPolarities.txt}.
 }
 
-If \code{rescale = TRUE}, the hybrid index is mapped to \deqn{[0,1]}. If all values
+If \code{rescale = TRUE}, the hybrid index is mapped to \eqn{[0,1]}. If all values
 are equal or non-finite, the original scale is preserved and a warning issued.
 
 Missing values are replaced with \code{0.5}, reflecting the default hybrid index

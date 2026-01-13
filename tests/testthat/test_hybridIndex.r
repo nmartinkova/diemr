@@ -51,17 +51,17 @@ test_that("correct solution of hybridIndex", {
 
   expect_equal(
     object = hybridIndex(dat, ChosenInds = 2:4),
-    expected = c(0.68, 0.5, 0.32), tolerance = 1e-2
+    expected = c(0.64, 0.5, 0.32), tolerance = 1e-2
   )
 
   expect_equal(
     object = hybridIndex(dat),
-    expected = c(0.27, 0.68, 0.5, 0.32, 0.42, 0.5), tolerance = 1e-2
+    expected = c(0.33, 0.64, 0.5, 0.32, 0.42, 0.5), tolerance = 1e-2
   )
 
   expect_equal(
     object = hybridIndex(dat, ChosenInds = 2:4, rescale = TRUE),
-    expected = c(1, 0.5, 0), tolerance = 1e-2
+    expected = c(1, 0.56, 0), tolerance = 1e-2
   )
 
   expect_warning(

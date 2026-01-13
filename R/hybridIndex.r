@@ -40,9 +40,11 @@
 #' * **Ploidy-aware multi-file input** - if `x` is a character vector of files
 #'   and `ploidy` and `changePolarity` are supplied, ploidy-aware hybrid indices
 #'   are calculated for an optional subset of individuals (`ChosenInds`) and
-#'   sites (`ChosenSites`).
+#'   sites (`ChosenSites`). Note that if the filename in `x` is not supplied together
+#'   with `ploidy` and `changePolarity` arguments, the function assumes the file contains
+#'   hybrid indices such as those saved by `diem()` to *HIwithOptimalPolarities.txt*.
 #'
-#' If `rescale = TRUE`, the hybrid index is mapped to \deqn{[0,1]}. If all values
+#' If `rescale = TRUE`, the hybrid index is mapped to \eqn{[0,1]}. If all values
 #' are equal or non-finite, the original scale is preserved and a warning issued.
 #'
 #' Missing values are replaced with `0.5`, reflecting the default hybrid index

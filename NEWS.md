@@ -1,3 +1,11 @@
+# diemr 1.5.3
+
+- Added test for `rank2map`.
+- Updated documentation.
+- Fixed bug in `diem` finalizing step when using a subset of individuals.
+- Removed row names from the `diem` output files.
+
+
 # diemr 1.5.2, released 11-12-2025
 
 - Integrated BED-format support into internal functions.

@@ -55,7 +55,9 @@
 #'
 #'   When a subset of individuals is used to inform the genome polarisation in the
 #'   \code{ChosenInds} argument, \code{ploidy} must still be provided for all individuals
-#'   included in the \code{files}.
+#'   included in the \code{files}. All individual-level outputs (\code{HI}, \code{I4}) are
+#'   produced only for the individuals in \code{ChosenInds}; individuals not included are 
+#'   omitted from these outputs.
 #'
 #'   \code{ChosenInds} should preferably be numeric values within the range from 1 to the
 #'   number of individuals in the \code{files}. Logical vectors must have a length equal
@@ -78,6 +80,9 @@
 #' @return A list including suggested marker polarities, diagnostic indices and support for all
 #' 		markers, four genomic state counts matrix for all individuals, and polarity changes
 #'      for the EM iterations.
+#'
+#'   Hybrid indices (\code{HI}) and individual state counts (\code{I4}) are reported only 
+#'   for individuals specified in \code{ChosenInds}, in their original order.
 #' @examples
 #' # set up input genotypes file names, ploidies and selection of individual samples
 #' inputFile <- system.file("extdata", "data7x3.txt", package = "diemr")
@@ -778,11 +783,11 @@ diem <- function(files, ploidy = FALSE, markerPolarity = FALSE, ChosenInds,
         ChosenSites = rep(TRUE, length(ChosenSites[[i]]))
       )
   }
-  I4compartments <- lapply(I4compartments, FUN = function(x) x[[1]])
-  I4 <- Reduce("+", I4compartments)
+  I4compartments <- lapply(I4compartments, FUN = function(x) x[[1]]) # all individuals
+  I4 <- Reduce("+", I4compartments)[ChosenInds, ] # only ChosenInds
 
-  A4compartments <- Map("*", I4compartments, lapply(ploidy, "[", ChosenInds))
-  A4 <- Reduce("+", A4compartments)
+  A4compartments <- Map("*", I4compartments, ploidy) # all individuals
+  A4 <- Reduce("+", A4compartments)[ChosenInds, ] # only ChosenInds
 
 
   HI <- apply(A4, 1, pHetErrOnStateCount)[1, ]
@@ -793,11 +798,11 @@ diem <- function(files, ploidy = FALSE, markerPolarity = FALSE, ChosenInds,
   )
   write.table(I4,
     file = paste0(folder, "/I4withOptimalPolarities.txt"), sep = "\t",
-    row.names = TRUE, col.names = c("_", "0", "1", "2")
+    row.names = FALSE, col.names = c("_", "0", "1", "2")
   )
   write.table(HI,
     sep = "\t",
-    col.names = "HybridIndex",
+    col.names = "HybridIndex", row.names = FALSE,
     file = paste0(folder, "/HIwithOptimalPolarities.txt")
   )
 

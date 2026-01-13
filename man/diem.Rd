@@ -51,6 +51,9 @@ be saved.}
 A list including suggested marker polarities, diagnostic indices and support for all
 markers, four genomic state counts matrix for all individuals, and polarity changes
 for the EM iterations.
+
+Hybrid indices (\code{HI}) and individual state counts (\code{I4}) are reported only
+for individuals specified in \code{ChosenInds}, in their original order.
 }
 \description{
 Estimates how to assign alleles in a genome to maximise the distinction between two
@@ -88,7 +91,9 @@ chromosomes, but males only one, and females have no Y chromosomes:
 
 When a subset of individuals is used to inform the genome polarisation in the
 \code{ChosenInds} argument, \code{ploidy} must still be provided for all individuals
-included in the \code{files}.
+included in the \code{files}. All individual-level outputs (\code{HI}, \code{I4}) are
+produced only for the individuals in \code{ChosenInds}; individuals not included are
+omitted from these outputs.
 
 \code{ChosenInds} should preferably be numeric values within the range from 1 to the
 number of individuals in the \code{files}. Logical vectors must have a length equal

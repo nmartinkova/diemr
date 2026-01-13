@@ -47,7 +47,8 @@
 #' \code{yaxs}, \code{xlab}, \code{ylab}, \code{breaks}, \code{useRaster}, \code{asp},
 #' \code{cex}, \code{cex.lab}, \code{cex.main}, \code{cex.sub}, \code{axes},
 #' \code{col.axis}, \code{cex.axis}, \code{family}, \code{font}, \code{font.axis},
-#' \code{font.lab}, \code{font.main}, \code{font.sub}, \code{lab}, \code{xpd}.
+#' \code{font.lab}, \code{font.main}, \code{font.sub}, \code{lab}, \code{xpd}, \code{main},
+#' \code{sub}.
 #'
 #' \strong{Axis arguments:} \code{side}, \code{at}, \code{col.ticks}, \code{labels},
 #' \code{las}, \code{tick}, \code{line}, \code{pos}, \code{outer}, \code{font},
@@ -142,7 +143,7 @@ plotPolarized <- function(
     "zlim", "xlim", "ylim", "add", "xaxs", "yaxs", "xlab", "ylab", "breaks",
     "useRaster", "asp", "cex", "cex.lab", "cex.main", "cex.sub", "axes", "col.axis",
     "cex.axis", "family", "font", "font.axis", "font.lab", "font.main", "font.sub", "lab",
-    "xpd"
+    "xpd", "main", "sub"
   )
   acceptedAxisArgs <- c(
     "side", "at", "col.ticks", "labels", "las", "tick", "line",
