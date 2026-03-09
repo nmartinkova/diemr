@@ -15,8 +15,8 @@ vcf2diem(
 )
 }
 \arguments{
-\item{SNP}{A character vector with a path to the '.vcf' or '.vcf.gz' file, or an \code{vcfR}
-object. Diploid data are currently supported.}
+\item{SNP}{A character vector with a path to the '.vcf' or '.vcf.gz' file. Diploid
+and haploid data are currently supported.}
 
 \item{filename}{A character vector with a path where to save the converted genotypes.}
 
@@ -47,8 +47,7 @@ Reads vcf files and writes genotypes of the most frequent alleles based on
 chromosome positions to diem format.
 }
 \details{
-Importing vcf files larger than 1GB, and those containing multiallelic
-genotypes is not recommended. Instead, use the path to the
+Support for \code{vcfR} object has been deprecated. Instead, use the path to the
 vcf file in \code{SNP}. \code{vcf2diem} then reads the file line by line, which is
 a preferred solution for data conversion, especially for
 very large and complex genomic datasets.
@@ -60,8 +59,7 @@ and class of the \code{SNP} object.
 option when you do not use parallelization or differentiate ploidy in some
 compartments.
 \item Other values of \code{chunk < 100} are interpreted as the number of files into which to
-split data in \code{SNP}. For \code{SNP} object of class \code{vcfR}, the number
-of sites per file is calculated from the dimensions of \code{SNP}. When class
+split data in \code{SNP}. When class
 of \code{SNP} is \code{character}, the number of sites per file is approximated
 from a model with a message. If this number of sites per file is inappropriate
 for the expected

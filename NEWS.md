@@ -1,4 +1,11 @@
-# diemr 1.5.3
+# diemr 1.5.4, released 09-03-2026
+
+- Set default major alleles to all alleles in `vcf2diem`. 
+- Removed support for `vcfR` objects in `vcf2diem`.
+- Added conversion of haploid genotypes in `vcf2diem`.
+
+
+# diemr 1.5.3, released 13-01-2026
 
 - Added test for `rank2map`.
 - Updated documentation.

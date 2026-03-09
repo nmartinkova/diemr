@@ -3,8 +3,8 @@
 #' Reads vcf files and writes genotypes of the most frequent alleles based on
 #' chromosome positions to diem format.
 #'
-#' @param SNP A character vector with a path to the '.vcf' or '.vcf.gz' file, or an \code{vcfR}
-#'     object. Diploid data are currently supported.
+#' @param SNP A character vector with a path to the '.vcf' or '.vcf.gz' file. Diploid
+#'  and haploid data are currently supported.
 #' @param filename A character vector with a path where to save the converted genotypes.
 #' @param chunk Numeric indicating by how many sites should the result be split into
 #'     separate files.
@@ -20,8 +20,7 @@
 #'     in 3-column BED format.
 #' @inheritParams diem
 #'
-#' @details Importing vcf files larger than 1GB, and those containing multiallelic
-#'    genotypes is not recommended. Instead, use the path to the
+#' @details Support for `vcfR` object has been deprecated. Instead, use the path to the
 #'    vcf file in \code{SNP}. \code{vcf2diem} then reads the file line by line, which is
 #'    a preferred solution for data conversion, especially for
 #'    very large and complex genomic datasets.
@@ -33,8 +32,7 @@
 #'    option when you do not use parallelization or differentiate ploidy in some
 #'    compartments.
 #'    * Other values of \code{chunk < 100} are interpreted as the number of files into which to
-#'    split data in \code{SNP}. For \code{SNP} object of class \code{vcfR}, the number
-#'    of sites per file is calculated from the dimensions of \code{SNP}. When class
+#'    split data in \code{SNP}. When class
 #'    of \code{SNP} is \code{character}, the number of sites per file is approximated
 #'    from a model with a message. If this number of sites per file is inappropriate
 #'    for the expected
@@ -88,8 +86,8 @@
 #' vcf2diem(SNP = myofile, filename = "test2", chunk = 3)
 #' }
 vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, ChosenInds = "all", maxMissing = 0L, bed = FALSE) {
-  if (!inherits(SNP, c("character", "vcfR"), which = FALSE)) {
-    stop("'SNP' must be either a 'vcfR' object or a 'character' string with path to a vcf file.")
+  if (!inherits(SNP, c("character"), which = FALSE)) {
+    stop("'SNP' must be a 'character' string with path to a vcf file.")
   }
   if (length(SNP) != 1) {
     stop("Provide a single object or path in 'SNP'.")
@@ -144,20 +142,10 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     )
     # estimate chunk size
     if (chunk < 100 && chunk != 1L) {
-      if (any(class(SNP) == "vcfR")) {
-        filename <- paste0(
-          filename, "-",
-          formatC(1:chunk, width = 3, flag = 0),
-          ".",
-          ifelse(fileext == "", "txt", fileext)
-        )
-        chunk <- unname(ceiling(nrow(SNP@fix) / chunk))
-      } else {
-        filesize <- file.size(SNP)[1]
-        # model prediction on possible number of sites per chunk
-        chunk <- ceiling(10^(-1.2387 + 0.7207 * log10(filesize)) / chunk)
-        message("Expecting to include ", chunk, " sites per diem file.\nIf you expect more sites in the file, provide a suitable chunk size.")
-      }
+      filesize <- file.size(SNP)[1]
+      # model prediction on possible number of sites per chunk
+      chunk <- ceiling(10^(-1.2387 + 0.7207 * log10(filesize)) / chunk)
+      message("Expecting to include ", chunk, " sites per diem file.\nIf you expect more sites in the file, provide a suitable chunk size.")
     }
     if (chunk >= 100) {
       message("Will include up to ", chunk, " sites per diem file.")
@@ -184,6 +172,7 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     )
     resolvable[lengths(resolvable) <= 1] <- NA # sets sites as not resolvable if less than 2 substitutions remain
     reason <- 1
+    keptAlleles <- strsplit(ALLELES, ",", fixed = TRUE)[[1]]
 
     # remove sites with unresolvable indels
     SNP[indels <- sapply(resolvable, FUN = anyNA, simplify = TRUE), ] <- NA
@@ -192,13 +181,14 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     multiallelic <- which(grepl(",", ALLELES) & !indels)
     if (length(multiallelic) > 0) {
       for (i in multiallelic) {
-        alleleCounts <- table(unlist(strsplit(SNP, "/|\\|")))
+        alleleCounts <- table(unlist(strsplit(SNP[i, ], "/|\\|")))
         # check that the site is not invariant
         if (sum(as.character(resolvable[[i]]) %in% names(alleleCounts)) < 2) {
           next
         }
         # select allele numbers with the highest allele counts
         majorAlleles <- names(sort(alleleCounts[names(alleleCounts) %in% as.character(0:9)], decreasing = TRUE)[1:2])
+        keptAlleles <- keptAlleles[as.numeric(majorAlleles) + 1]
         SNP[i, ] <- gsub(
           pattern = paste0("[", paste(c(0:9)[-(1 + as.numeric(majorAlleles))], collapse = ""), "]"),
           replacement = "\\.",
@@ -213,9 +203,10 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
 
     # genotypes from the most frequent substitutions
     SNP[is.na(SNP)] <- "_"
-    patterns <- c(".*\\..*", "0.0", "0.1", "1.0", "1.1")
-    replacements <- c("_", 0, 1, 1, 2)
-    for (i in 1:5) {
+    # missing, diploid, haploid
+    patterns <- c(".*\\..*", "^0.0$", "^0.1$", "^1.0$", "^1.1$", "^0$", "^1$")
+    replacements <- c("_", 0, 1, 1, 2, 0, 2)
+    for (i in seq_along(patterns)) {
       SNP <- sub(patterns[i], replacements[i], SNP, perl = TRUE)
     }
 
@@ -267,7 +258,7 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
           paste(
             c(
               INFO[!nonInformative, c(1:2, 6)],
-              strsplit(ALLELES, ",", fixed = TRUE)[[1]][as.numeric(majorAlleles) + 1]
+              keptAlleles
             ),
             collapse = "\t"
           ),
@@ -278,8 +269,6 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
 
     return(SNP[!nonInformative, ])
   }
-
-
 
 
   #############################
@@ -306,34 +295,6 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     cat("CHROM\tPOS\tQUAL\tallele0\tallele2\n", file = includedSites, append = FALSE)
   }
   cat("sampleNames\n", file = sampleNames, append = FALSE)
-
-
-  ##############################
-  ####  Convert class vcfR  ####
-  ##############################
-
-  if (inherits(SNP, "vcfR")) {
-    INFO <- vcfR::getFIX(SNP, getINFO = FALSE)
-    SNP <- vcfR::extract.gt(SNP)
-
-
-    SNP <- ResolveGenotypes()
-
-
-    lims <- c(seq(0, nrow(SNP), by = chunk), nrow(SNP))
-    filesizes <- diff(lims)
-
-    for (i in 1:ceiling(nrow(SNP) / chunk)) {
-      write.table(
-        cbind(
-          rep("S", filesizes[i]),
-          SNP[(lims[i] + 1):lims[i + 1], ]
-        ),
-        file = filename[i],
-        col.names = FALSE, row.names = FALSE, quote = FALSE, sep = ""
-      )
-    }
-  }
 
 
   ###################################
@@ -393,7 +354,6 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
     if (maxMissing > 0) {
       maxMissing <- ifelse(maxMissing < 1, round(maxMissing * length(ChosenInds), 0), maxMissing)
     }
-
 
 
     # read and resolve genotypes

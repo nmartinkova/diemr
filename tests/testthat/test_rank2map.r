@@ -5,7 +5,7 @@ test_that("rank2map returns valid windows for myotis.vcf (windowSize = 100)", {
   setwd(tmpDir)
   on.exit(setwd(oldWd), add = TRUE)
 
-  vcf2diem(myoFile, "myo")
+  vcf2diem(myoFile, "myo", requireHomozygous = TRUE)
   bed <- readIncludedSites("myo-includedSites.txt")
 
   res <- rank2map("myo-includedSites.txt", windowSize = 100)
@@ -19,7 +19,7 @@ test_that("rank2map returns valid windows for myotis.vcf (windowSize = 100)", {
   
   expect_equal(
   	object = res,
-  	expected = matrix(c(1, 2, 2, 2, 2, 6, 7, 8, 1, 5, 5, 5, 5, 6, 7, 8), 
+  	expected = matrix(c(1, 2, 3, 4, 4, 4, 4, 8, 9, 10, 11, 1, 2, 3, 7, 7, 7, 7, 8, 9, 10, 11), 
   		ncol = 2),
   		ignore.attr = TRUE
   )
@@ -34,7 +34,7 @@ test_that("rank2map respects ChosenSites for myotis.vcf (windowSize = 150)", {
   on.exit(setwd(oldWd), add = TRUE)
 
   vcf2diem(myoFile, "myo")
-  chosenSites <- c(TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE)
+  chosenSites <- c(TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE)
 
   res <- rank2map("myo-includedSites.txt", ChosenSites = chosenSites, windowSize = 150)
 
@@ -43,7 +43,7 @@ test_that("rank2map respects ChosenSites for myotis.vcf (windowSize = 150)", {
   
     expect_equal(
   	object = res,
-  	expected = matrix(c(1, 2, 2, 4, 1, 3, 3, 4), 
+  	expected = matrix(c(1, 2, 3, 3, 1, 2, 4, 4), 
   		ncol = 2),
   		ignore.attr = TRUE
   )
