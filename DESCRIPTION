@@ -1,6 +1,6 @@
 Package: diemr
 Title: Genome Polarization via Diagnostic Index Expectation Maximization
-Version: 1.5.4
+Version: 1.5.5
 Authors@R: c(
     person(given = "Natalia",
            family = "Martinkova",

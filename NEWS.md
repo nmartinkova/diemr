@@ -1,3 +1,8 @@
+# diemr 1.5.5, released 18-03-2026
+
+- **Fixed a bug in `vcf2diem` where diploid genotypes were incorrectly recoded as haploid.**
+
+
 # diemr 1.5.4, released 09-03-2026
 
 - Set default major alleles to all alleles in `vcf2diem`. 

@@ -203,9 +203,9 @@ vcf2diem <- function(SNP, filename, chunk = 1L, requireHomozygous = TRUE, Chosen
 
     # genotypes from the most frequent substitutions
     SNP[is.na(SNP)] <- "_"
-    # missing, diploid, haploid
-    patterns <- c(".*\\..*", "^0.0$", "^0.1$", "^1.0$", "^1.1$", "^0$", "^1$")
-    replacements <- c("_", 0, 1, 1, 2, 0, 2)
+    # missing, haploid, diploid. otherwise all are treated as haploid
+    patterns <- c(".*\\..*", "^0$", "^1$", "^0.0$", "^0.1$", "^1.0$", "^1.1$")
+    replacements <- c("_", 0, 2, 0, 1, 1, 2)
     for (i in seq_along(patterns)) {
       SNP <- sub(patterns[i], replacements[i], SNP, perl = TRUE)
     }

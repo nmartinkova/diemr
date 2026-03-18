@@ -19,7 +19,7 @@ test_that("rank2map returns valid windows for myotis.vcf (windowSize = 100)", {
   
   expect_equal(
   	object = res,
-  	expected = matrix(c(1, 2, 3, 4, 4, 4, 4, 8, 9, 10, 11, 1, 2, 3, 7, 7, 7, 7, 8, 9, 10, 11), 
+  	expected = matrix(c(1, 2, 2, 2, 2, 6, 7, 8, 1, 5, 5, 5, 5, 6, 7, 8), 
   		ncol = 2),
   		ignore.attr = TRUE
   )
@@ -43,7 +43,7 @@ test_that("rank2map respects ChosenSites for myotis.vcf (windowSize = 150)", {
   
     expect_equal(
   	object = res,
-  	expected = matrix(c(1, 2, 3, 3, 1, 2, 4, 4), 
+  	expected = matrix(c(1, 2, 2, 4, 1, 3, 3, 4), 
   		ncol = 2),
   		ignore.attr = TRUE
   )
